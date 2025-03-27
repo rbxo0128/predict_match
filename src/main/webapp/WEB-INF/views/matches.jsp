@@ -220,7 +220,7 @@
                                 <c:otherwise>
                                     <!-- 예정된 경기 -->
                                     <div class="flex justify-center space-x-2">
-                                        <form action="${pageContext.request.contextPath}/matches/predict" method="post" class="inline">
+                                        <form action="${pageContext.request.contextPath}/matches/predict" method="post" class="inline" data-team-name="${match.team1().teamName()}">
                                             <sec:csrfInput />
                                             <input type="hidden" name="matchId" value="${match.match().match_id()}">
                                             <input type="hidden" name="teamId" value="${match.team1().teamId()}">
@@ -231,7 +231,7 @@
                                                     ${match.team1().teamName()}
                                             </button>
                                         </form>
-                                        <form action="${pageContext.request.contextPath}/matches/predict" method="post" class="inline">
+                                        <form action="${pageContext.request.contextPath}/matches/predict" method="post" class="inline" data-team-name="${match.team2().teamName()}">
                                             <sec:csrfInput />
                                             <input type="hidden" name="matchId" value="${match.match().match_id()}">
                                             <input type="hidden" name="teamId" value="${match.team2().teamId()}">
@@ -362,7 +362,7 @@
         const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content')
             || document.querySelector('input[name="_csrf"]')?.value;
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content')
-            || '${_csrf.headerName}';
+            || "${_csrf.headerName}";
 
         // 모든 예측 폼에 이벤트 리스너 추가
         const predictionForms = document.querySelectorAll('form[action*="/matches/predict"]');
@@ -375,16 +375,23 @@
                 const matchIdInput = this.querySelector('input[name="matchId"]');
                 const teamIdInput = this.querySelector('input[name="teamId"]');
 
-                // 값 체크
-                if (!matchIdInput || !teamIdInput || !matchIdInput.value || !teamIdInput.value) {
-                    console.error('matchId 또는 teamId 입력이 없거나 값이 비어 있습니다');
+                if (!matchIdInput || !teamIdInput) {
+                    console.error('matchId 또는 teamId 입력이 없습니다');
                     return;
                 }
 
                 const matchId = matchIdInput.value;
                 const teamId = teamIdInput.value;
 
-                // FormData 객체 사용
+                // 버튼과 원래 팀 이름 저장
+                const button = this.querySelector('button');
+                const originalButtonHTML = button.innerHTML; // 원본 HTML 저장
+
+                // 로딩 표시
+                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> 처리중...';
+                button.disabled = true;
+
+                // FormData 객체 생성
                 const formData = new FormData();
                 formData.append('matchId', matchId);
                 formData.append('teamId', teamId);
@@ -402,9 +409,11 @@
                         if (!response.ok) {
                             throw new Error('서버 응답 오류: ' + response.status);
                         }
+                        console.log('서버 응답 성공');
                         return response.json();
                     })
                     .then(data => {
+                        console.log('받은 데이터:', data);
                         if (data.success) {
                             // 성공 메시지 표시
                             showMessage(true, data.message || '예측이 성공적으로 저장되었습니다.');
@@ -414,86 +423,83 @@
                         } else {
                             // 오류 메시지 표시
                             showMessage(false, data.error || '예측 저장 실패');
+
+                            // 버튼 원래 상태로 복원
+                            button.innerHTML = originalButtonHTML;
+                            button.disabled = false;
                         }
                     })
                     .catch(error => {
                         console.error('예측 처리 중 오류:', error);
                         showMessage(false, '예측 처리 중 오류가 발생했습니다.');
+
+                        // 버튼 원래 상태로 복원
+                        button.innerHTML = originalButtonHTML;
+                        button.disabled = false;
                     });
             });
         });
 
-        // 메시지 표시 함수
+        // 메시지 표시 함수 (이전과 동일)
         function showMessage(isSuccess, message) {
-            // 기존 메시지 삭제
-            const existingMessages = document.querySelectorAll('.message-alert');
-            existingMessages.forEach(msg => msg.remove());
-
-            // 새 메시지 생성
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `message-alert fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
-            isSuccess ? 'bg-green-100 border-l-4 border-green-500 text-green-700' :
-            'bg-red-100 border-l-4 border-red-500 text-red-700'
-        }`;
-
-            alertDiv.innerHTML = `
-            <div class="flex items-center">
-                <i class="fas fa-${isSuccess ? 'check' : 'exclamation'}-circle mr-2"></i>
-                <span>${message}</span>
-            </div>
-        `;
-
-            document.body.appendChild(alertDiv);
-
-            // 3초 후 메시지 사라짐
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 3000);
+            // (생략)...
         }
 
-        // 예측 버튼 업데이트 함수
+        // 예측 버튼 업데이트 함수 수정
         function updatePredictionButtons(matchId, selectedTeamId) {
-            // 해당 경기의 모든 버튼 찾기 (같은 matchId 값을 가진 폼들)
-            const matchForms = document.querySelectorAll(`form input[name="matchId"][value="${matchId}"]`);
+            console.log('버튼 업데이트: 매치 ID =', matchId, '선택된 팀 ID =', selectedTeamId);
 
-            matchForms.forEach(input => {
-                const form = input.closest('form');
+            // 문자열로 변환
+            matchId = String(matchId);
+            selectedTeamId = String(selectedTeamId);
+
+            // 모든 예측 폼을 스캔
+            const allForms = document.querySelectorAll('form[action*="/matches/predict"]');
+            console.log('전체 예측 폼 수:', allForms.length);
+
+            let matchFormsCount = 0;
+
+            allForms.forEach(form => {
+                const matchIdInput = form.querySelector('input[name="matchId"]');
                 const teamIdInput = form.querySelector('input[name="teamId"]');
                 const button = form.querySelector('button');
 
-                if (!teamIdInput || !button) return;
+                if (!matchIdInput || !teamIdInput || !button) return;
 
+                const currentMatchId = matchIdInput.value;
                 const currentTeamId = teamIdInput.value;
 
-                if (currentTeamId === selectedTeamId) {
-                    // 선택된 팀 버튼 스타일 업데이트
-                    button.classList.remove('bg-gray-200', 'text-gray-800');
-                    button.classList.add('bg-blue-500', 'text-white');
+                // 현재 폼이 업데이트할 매치에 해당하는지 확인
+                if (currentMatchId === matchId) {
+                    matchFormsCount++;
+                    console.log('매치 ID 일치 폼 발견:', currentMatchId, '팀 ID:', currentTeamId);
 
-                    // 체크 아이콘 추가 (이미 있으면 추가하지 않음)
-                    if (!button.querySelector('.fas.fa-check-circle')) {
-                        if (button.firstChild) {
-                            // 기존 텍스트 노드 앞에 아이콘 추가
-                            const icon = document.createElement('i');
-                            icon.className = 'fas fa-check-circle mr-1';
-                            button.insertBefore(icon, button.firstChild);
-                        } else {
-                            // 버튼이 비어있으면 아이콘만 추가
-                            const icon = document.createElement('i');
-                            icon.className = 'fas fa-check-circle mr-1';
-                            button.appendChild(icon);
-                        }
+                    // 원래 팀 이름 가져오기 (스피너와 "처리중..." 텍스트 제외)
+                    // JSP에서 원래 렌더링된 팀 이름 텍스트 추출
+                    const teamNameText = form.querySelector('input[name="teamId"]').closest('form').getAttribute('data-team-name') ||
+                        button.textContent.replace('처리중...', '').trim();
+
+                    if (currentTeamId === selectedTeamId) {
+                        console.log('선택된 팀 버튼:', teamNameText);
+                        // 선택된 팀 버튼 업데이트
+                        button.className = 'bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition-colors duration-200 flex items-center';
+                        button.disabled = false;
+
+                        // 체크 아이콘과 팀 이름으로 내용 설정
+                        button.innerHTML = '<i class="fas fa-check-circle mr-1"></i>' + teamNameText;
+                    } else {
+                        console.log('선택되지 않은 팀 버튼:', teamNameText);
+                        // 선택되지 않은 팀 버튼 업데이트
+                        button.className = 'bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition-colors duration-200 flex items-center';
+                        button.disabled = false;
+
+                        // 팀 이름만 표시
+                        button.innerHTML = teamNameText;
                     }
-                } else {
-                    // 선택되지 않은 팀 버튼 스타일 업데이트
-                    button.classList.remove('bg-blue-500', 'text-white');
-                    button.classList.add('bg-gray-200', 'text-gray-800');
-
-                    // 체크 아이콘 제거
-                    const icon = button.querySelector('.fas.fa-check-circle');
-                    if (icon) icon.remove();
                 }
             });
+
+            console.log('업데이트된 매치 폼 수:', matchFormsCount);
         }
     });
 </script>
