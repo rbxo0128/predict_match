@@ -27,23 +27,26 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/", "/login", "/signup", "/asset/**").permitAll()
+                        .requestMatchers("/", "/login", "/login-process", "/signup", "/asset/**").permitAll()
                         .requestMatchers("/predict/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .usernameParameter("username") // 이메일 필드명
+                        .loginProcessingUrl("/login-process") // 다른 URL 사용
+                        .usernameParameter("username")
                         .passwordParameter("password")
                         .defaultSuccessUrl("/", true)
                         .failureUrl("/login?error=true")
+                        .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                         .logoutSuccessUrl("/login?logout=true")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
+                        .permitAll()
                 )
                 .exceptionHandling(ex -> ex
                         .accessDeniedPage("/access-denied")

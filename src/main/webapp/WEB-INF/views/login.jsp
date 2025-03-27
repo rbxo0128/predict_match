@@ -32,7 +32,7 @@
       </div>
     </c:if>
 
-    <form action="${pageContext.request.contextPath}/login" method="post" class="space-y-4">
+    <form action="${pageContext.request.contextPath}/login-process" method="post" class="space-y-4">
       <sec:csrfInput />
 
       <div>
