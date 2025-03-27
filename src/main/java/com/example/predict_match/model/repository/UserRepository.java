@@ -13,9 +13,9 @@ import java.util.logging.Logger;
 public class UserRepository implements JDBCRepository {
     private final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
     private final Logger logger = Logger.getLogger(UserRepository.class.getName());
-    private final String URL = dotenv.get("DB_URL");
-    private final String USER = dotenv.get("DB_USER");
-    private final String PASSWORD = dotenv.get("DB_PASSWORD");
+    public final String URL = dotenv.get("DB_URL");
+    public final String USER = dotenv.get("DB_USER");
+    public final String PASSWORD = dotenv.get("DB_PASSWORD");
 
     public User save(User user) throws SQLException, ClassNotFoundException {
         String query = "INSERT INTO USERS (user_id, username, email, password, role, point, is_active) " +

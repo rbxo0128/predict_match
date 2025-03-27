@@ -15,9 +15,9 @@ public class MatchRepository implements JDBCRepository {
     final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
     final Logger logger = Logger.getLogger(MatchRepository.class.getName());
     final JsoupRepository jsoupRepository;
-    final String URL = dotenv.get("DB_URL");
-    final String USER = dotenv.get("DB_USER");
-    final String PASSWORD = dotenv.get("DB_PASSWORD");
+    public final String URL = dotenv.get("DB_URL");
+    public final String USER = dotenv.get("DB_USER");
+    public final String PASSWORD = dotenv.get("DB_PASSWORD");
 
     public MatchRepository(JsoupRepository jsoupRepository) {
         this.jsoupRepository = jsoupRepository;
@@ -50,6 +50,7 @@ public class MatchRepository implements JDBCRepository {
 
 
     public List<Match> findAll() throws Exception {
+        logger.info("findAll 시작");
         List<Match> matches = new ArrayList<>();
         try (Connection conn = getConnection(URL, USER, PASSWORD)) {
             Statement stmt = conn.createStatement();
@@ -60,7 +61,7 @@ public class MatchRepository implements JDBCRepository {
                         rs.getInt("match_id"),
                         rs.getInt("team1_id"),
                         rs.getInt("team2_id"),
-                        rs.getString("match_data"),
+                        rs.getString("match_date"),
                         rs.getInt("team1_score"),
                         rs.getInt("team2_score"),
                         rs.getInt("is_finished"),
@@ -68,6 +69,7 @@ public class MatchRepository implements JDBCRepository {
                 ));
             }
         }
+        logger.info(matches.toString());
         return matches;
     }
 
