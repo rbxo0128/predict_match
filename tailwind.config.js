@@ -1,9 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./src/main/webapp/WEB-INF/views/**/*.jsp",
-    "./src/main/webapp/asset/js/**/*.js"
-  ],
+      "./src/main/webapp/**/*.jsp",  // ✅ 모든 JSP 파일 포함
+      "./src/main/webapp/**/*.html", // (선택) HTML 파일도 포함
+      "./src/main/webapp/**/*.js",   // (선택) JavaScript 파일도 포함
+    ],
   theme: {
     extend: {
       colors: {

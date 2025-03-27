@@ -73,14 +73,12 @@
 
     <build>
         <plugins>
-            <!-- 기존 플러그인들 + 프론트엔드 플러그인 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.4.0</version>
             </plugin>
 
-            <!-- Frontend 리소스 처리 플러그인 -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>

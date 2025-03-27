@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LCK 예측 - 로그인</title>
-  <link href="${pageContext.request.contextPath}/asset/css/tailwind.css" rel="stylesheet">
+  <link href="${pageContext.request.contextPath}/asset/css/output.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 font-sans">
 <div class="min-h-screen flex items-center justify-center">
