@@ -1,3 +1,5 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -12,26 +14,26 @@
   <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
     <h2 class="text-2xl font-bold text-lck-primary mb-6 text-center">LCK 예측 로그인</h2>
 
-    <% if (request.getParameter("error") != null) { %>
-    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-      잘못된 이메일 또는 비밀번호입니다.
-    </div>
-    <% } %>
+    <c:if test="${param.error != null}">
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        잘못된 이메일 또는 비밀번호입니다.
+      </div>
+    </c:if>
 
-    <% if (request.getParameter("logout") != null) { %>
-    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-      성공적으로 로그아웃되었습니다.
-    </div>
-    <% } %>
+    <c:if test="${param.logout != null}">
+      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+        성공적으로 로그아웃되었습니다.
+      </div>
+    </c:if>
 
-    <% if (request.getParameter("signup") != null) { %>
-    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-      회원가입이 성공적으로 완료되었습니다. 로그인해주세요.
-    </div>
-    <% } %>
+    <c:if test="${param.signup != null}">
+      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+        회원가입이 성공적으로 완료되었습니다. 로그인해주세요.
+      </div>
+    </c:if>
 
-    <form action="/login" method="post" class="space-y-4">
-      <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <form action="${pageContext.request.contextPath}/login" method="post" class="space-y-4">
+      <sec:csrfInput />
 
       <div>
         <label for="username" class="block text-sm font-medium text-gray-700 mb-1">이메일</label>

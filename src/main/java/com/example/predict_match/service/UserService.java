@@ -3,10 +3,11 @@ package com.example.predict_match.service;
 import com.example.predict_match.model.dto.SignUpRequest;
 import com.example.predict_match.model.dto.User;
 import com.example.predict_match.model.repository.UserRepository;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.Optional;
 
 @Service
@@ -58,5 +59,9 @@ public class UserService {
         }
 
         return Optional.empty();
+    }
+
+    public Optional<User> findByEmail(String email) throws Exception {
+        return userRepository.findByEmail(email);
     }
 }
