@@ -1,0 +1,12 @@
+{
+  "name": "predict-match",
+  "version": "1.0.0",
+  "description": "LCK Match Prediction Frontend",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/main/webapp/assets/css/input.css -o ./src/main/webapp/assets/css/output.css",
+    "watch:css": "tailwindcss -i ./src/main/webapp/assets/css/input.css -o ./src/main/webapp/assets/css/output.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
