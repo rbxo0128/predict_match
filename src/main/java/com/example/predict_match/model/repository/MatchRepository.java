@@ -1,6 +1,8 @@
 package com.example.predict_match.model.repository;
 
 import com.example.predict_match.model.dto.Match;
+import com.example.predict_match.model.dto.MatchWithTeams;
+import com.example.predict_match.model.dto.Team;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.stereotype.Repository;
 
@@ -25,21 +27,22 @@ public class MatchRepository implements JDBCRepository {
 
     public List<Match> check() throws Exception {
         try (Connection conn = getConnection(URL, USER, PASSWORD)) {
-            Statement stmt = conn.createStatement(); // PreparedStatement로 왜 안 만듦?
-            String query = "SELECT last_update_date FROM SCHEDULER";
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next()) {
-                String lastUpdate = rs.getString("last_update_date");
-                LocalDate dbDate = LocalDate.parse(lastUpdate);
-                LocalDate today = LocalDate.now();
+            String query = "SELECT * FROM MATCHES ORDER BY match_id ASC";
+            try (PreparedStatement pstmt = conn.prepareStatement(query);
+                 ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String lastUpdate = rs.getString("last_update_date");
+                    LocalDate dbDate = LocalDate.parse(lastUpdate);
+                    LocalDate today = LocalDate.now();
 
-                if (dbDate.equals(today)) {
-                    logger.info("DB의 날짜와 오늘 날짜가 같습니다");
-                }
-                else {
-                    logger.info("DB의 날짜와 오늘 날짜가 다릅니다");
-                    List<Match> matches = jsoupRepository.getMatches(4);
-                    update(matches);
+                    if (dbDate.equals(today)) {
+                        logger.info("DB의 날짜와 오늘 날짜가 같습니다");
+                    }
+                    else {
+                        logger.info("DB의 날짜와 오늘 날짜가 다릅니다");
+                        List<Match> matches = jsoupRepository.getMatches(4);
+                        update(matches);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -129,7 +132,79 @@ public class MatchRepository implements JDBCRepository {
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
+    }
 
+    public List<MatchWithTeams> getMatchwithTeams(){
+        List<MatchWithTeams> result = new ArrayList<>();
 
+        try (Connection conn = getConnection(URL, USER, PASSWORD)) {
+            String query = "SELECT m.*, t1.team_id as t1_id, t1.team_name as t1_name, t1.team_rank as t1_rank, " +
+                    "t2.team_id as t2_id, t2.team_name as t2_name, t2.team_rank as t2_rank " +
+                    "FROM MATCHES m " +
+                    "JOIN LCK_TEAMS t1 ON m.team1_id = t1.team_id " +
+                    "JOIN LCK_TEAMS t2 ON m.team2_id = t2.team_id " +
+                    "ORDER BY m.match_date";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(query);
+                 ResultSet rs = pstmt.executeQuery()) {
+
+                while (rs.next()) {
+                    Match match = new Match(
+                            rs.getInt("match_id"),
+                            rs.getInt("team1_id"),
+                            rs.getInt("team2_id"),
+                            rs.getString("match_date"),
+                            rs.getInt("team1_score"),
+                            rs.getInt("team2_score"),
+                            rs.getInt("is_finished"),
+                            rs.getInt("winner_id")
+                    );
+
+                    Team team1 = new Team(
+                            rs.getInt("t1_id"),
+                            rs.getString("t1_name"),
+                            rs.getInt("t1_rank")
+                    );
+
+                    Team team2 = new Team(
+                            rs.getInt("t2_id"),
+                            rs.getString("t2_name"),
+                            rs.getInt("t2_rank")
+                    );
+
+                    result.add(new MatchWithTeams(match, team1, team2, null));
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return result;
+    }
+
+    public Match findById(int matchId) throws SQLException, ClassNotFoundException {
+        String query = "SELECT * FROM MATCHES WHERE match_id = ?";
+
+        try (Connection conn = getConnection(URL, USER, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setInt(1, matchId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Match(
+                            rs.getInt("match_id"),
+                            rs.getInt("team1_id"),
+                            rs.getInt("team2_id"),
+                            rs.getString("match_date"),
+                            rs.getInt("team1_score"),
+                            rs.getInt("team2_score"),
+                            rs.getInt("is_finished"),
+                            rs.getInt("winner_id")
+                    );
+                }
+            }
+        }
+
+        return null;
     }
 }

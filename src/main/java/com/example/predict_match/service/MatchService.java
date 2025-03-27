@@ -7,6 +7,8 @@ import com.example.predict_match.model.repository.MatchRepository;
 import com.example.predict_match.model.repository.TeamRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,9 @@ import java.util.stream.Collectors;
 public class MatchService {
     private final MatchRepository matchRepository;
     private final TeamRepository teamRepository;
+    private List<Match> cachedMatches;
+    private LocalDateTime lastFetchTime;
+    private static final Duration CACHE_DURATION = Duration.ofMinutes(15);
 
     public MatchService(MatchRepository matchRepository, TeamRepository teamRepository) {
         this.matchRepository = matchRepository;
@@ -23,34 +28,22 @@ public class MatchService {
     }
 
     public List<Match> getAllMatches() throws Exception {
-        return matchRepository.check();
+        LocalDateTime now = LocalDateTime.now();
+        if (cachedMatches == null || lastFetchTime == null ||
+                Duration.between(lastFetchTime, now).compareTo(CACHE_DURATION) > 0) {
+            cachedMatches = matchRepository.check();
+            lastFetchTime = now;
+        }
+        return cachedMatches;
     }
 
     public List<MatchWithTeams> getMatchesWithTeams() throws Exception {
-        List<Match> matches = matchRepository.check();
-        List<Team> allTeams = teamRepository.findAll();
-        Map<Integer, Team> teamMap = allTeams.stream()
-                .collect(Collectors.toMap(Team::teamId, team -> team));
-
-        // 경기와 팀 정보 결합
-        List<MatchWithTeams> matchesWithTeams = new ArrayList<>();
-        for (Match match : matches) {
-            Team team1 = teamMap.get(match.team1_id());
-            Team team2 = teamMap.get(match.team2_id());
-
-            if (team1 != null && team2 != null) {
-                matchesWithTeams.add(new MatchWithTeams(match, team1, team2, null));
-            }
-        }
-        System.out.println("matchesWithTeams = " + matchesWithTeams);
-        return matchesWithTeams;
+        return matchRepository.getMatchwithTeams();
     }
 
     public Match getMatchById(int matchId) throws Exception {
-        List<Match> matches = matchRepository.findAll();
-        return matches.stream()
-                .filter(match -> match.match_id() == matchId)
-                .findFirst()
-                .orElse(null);
+        return matchRepository.findById(matchId);
     }
+
+
 }

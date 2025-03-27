@@ -16,6 +16,14 @@ public class EncodingFilter implements Filter {
 
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
+
+        String path = request.getRequestURI();
+        if (path.contains("/matches/predict")) {
+            // API 요청의 경우 필터를 적용하지 않고 그대로 통과
+            chain.doFilter(req, resp);
+            return;
+        }
+
         response.setContentType("text/html;charset=UTF-8");
         chain.doFilter(req, resp);
     }

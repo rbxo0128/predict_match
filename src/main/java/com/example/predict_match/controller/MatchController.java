@@ -8,19 +8,16 @@ import com.example.predict_match.service.MatchService;
 import com.example.predict_match.service.PredictionService;
 import com.example.predict_match.service.TeamService;
 import com.example.predict_match.service.UserService;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/matches")
@@ -79,56 +76,67 @@ public class MatchController {
         }
     }
 
-    @PostMapping("/predict")
-    public String predictMatch(@RequestParam("matchId") int matchId,
-                               @RequestParam("teamId") int teamId,
-                               Authentication authentication,
-                               RedirectAttributes redirectAttributes) {
+    @PostMapping(value = "/predict", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody  // 이 어노테이션을 추가하여 응답이 뷰가 아닌 데이터임을 나타냄
+    public ResponseEntity<Map<String, Object>> predictMatch(
+            @RequestParam("matchId") int matchId,
+            @RequestParam("teamId") int teamId,
+            Authentication authentication) {
+
+        Map<String, Object> response = new HashMap<>();
+
         try {
             // 사용자 확인
             if (authentication == null || !authentication.isAuthenticated()) {
-                redirectAttributes.addFlashAttribute("error", "예측하려면 로그인이 필요합니다.");
-                return "redirect:/login";
+                response.put("success", false);
+                response.put("error", "예측하려면 로그인이 필요합니다.");
+                return ResponseEntity.ok(response);
             }
 
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             Optional<User> userOptional = userService.findByEmail(userDetails.getUsername());
 
             if (userOptional.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "사용자 정보를 찾을 수 없습니다.");
-                return "redirect:/matches";
+                response.put("success", false);
+                response.put("error", "사용자 정보를 찾을 수 없습니다.");
+                return ResponseEntity.ok(response);
             }
 
             User user = userOptional.get();
 
-            // 경기 확인
+            // 경기 확인 (단일 쿼리로 가져옴)
             Match match = matchService.getMatchById(matchId);
             if (match == null) {
-                redirectAttributes.addFlashAttribute("error", "존재하지 않는 경기입니다.");
-                return "redirect:/matches";
+                response.put("success", false);
+                response.put("error", "존재하지 않는 경기입니다.");
+                return ResponseEntity.ok(response);
             }
 
             // 이미 종료된 경기인지 확인
             if (match.is_finished() == 1) {
-                redirectAttributes.addFlashAttribute("error", "이미 종료된 경기는 예측할 수 없습니다.");
-                return "redirect:/matches";
+                response.put("success", false);
+                response.put("error", "이미 종료된 경기는 예측할 수 없습니다.");
+                return ResponseEntity.ok(response);
             }
 
             // 유효한 팀인지 확인 (Team1 또는 Team2여야 함)
             if (match.team1_id() != teamId && match.team2_id() != teamId) {
-                redirectAttributes.addFlashAttribute("error", "유효하지 않은 팀 선택입니다.");
-                return "redirect:/matches";
+                response.put("success", false);
+                response.put("error", "유효하지 않은 팀 선택입니다.");
+                return ResponseEntity.ok(response);
             }
 
             // 예측 저장 또는 업데이트
             predictionService.createOrUpdatePrediction(user, matchId, teamId);
 
-            redirectAttributes.addFlashAttribute("success", "예측이 성공적으로 저장되었습니다.");
-            return "redirect:/matches";
+            response.put("success", true);
+            response.put("message", "예측이 성공적으로 저장되었습니다.");
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "예측 처리 중 오류가 발생했습니다: " + e.getMessage());
-            return "redirect:/matches";
+            response.put("success", false);
+            response.put("error", "예측 처리 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.ok(response);
         }
     }
 }

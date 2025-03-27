@@ -356,5 +356,146 @@
         </p>
     </div>
 </footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // CSRF 토큰 가져오기
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content')
+            || document.querySelector('input[name="_csrf"]')?.value;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content')
+            || '${_csrf.headerName}';
+
+        // 모든 예측 폼에 이벤트 리스너 추가
+        const predictionForms = document.querySelectorAll('form[action*="/matches/predict"]');
+
+        predictionForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // 폼의 기본 제출 동작 방지
+
+                // 폼 데이터 가져오기
+                const matchIdInput = this.querySelector('input[name="matchId"]');
+                const teamIdInput = this.querySelector('input[name="teamId"]');
+
+                // 값 체크
+                if (!matchIdInput || !teamIdInput || !matchIdInput.value || !teamIdInput.value) {
+                    console.error('matchId 또는 teamId 입력이 없거나 값이 비어 있습니다');
+                    return;
+                }
+
+                const matchId = matchIdInput.value;
+                const teamId = teamIdInput.value;
+
+                // FormData 객체 사용
+                const formData = new FormData();
+                formData.append('matchId', matchId);
+                formData.append('teamId', teamId);
+                formData.append('${_csrf.parameterName}', csrfToken);
+
+                // AJAX 요청
+                fetch('${pageContext.request.contextPath}/matches/predict', {
+                    method: 'POST',
+                    headers: {
+                        [csrfHeader]: csrfToken
+                    },
+                    body: new URLSearchParams(formData)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('서버 응답 오류: ' + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // 성공 메시지 표시
+                            showMessage(true, data.message || '예측이 성공적으로 저장되었습니다.');
+
+                            // 현재 경기의 모든 팀 버튼 업데이트
+                            updatePredictionButtons(matchId, teamId);
+                        } else {
+                            // 오류 메시지 표시
+                            showMessage(false, data.error || '예측 저장 실패');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('예측 처리 중 오류:', error);
+                        showMessage(false, '예측 처리 중 오류가 발생했습니다.');
+                    });
+            });
+        });
+
+        // 메시지 표시 함수
+        function showMessage(isSuccess, message) {
+            // 기존 메시지 삭제
+            const existingMessages = document.querySelectorAll('.message-alert');
+            existingMessages.forEach(msg => msg.remove());
+
+            // 새 메시지 생성
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `message-alert fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+            isSuccess ? 'bg-green-100 border-l-4 border-green-500 text-green-700' :
+            'bg-red-100 border-l-4 border-red-500 text-red-700'
+        }`;
+
+            alertDiv.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas fa-${isSuccess ? 'check' : 'exclamation'}-circle mr-2"></i>
+                <span>${message}</span>
+            </div>
+        `;
+
+            document.body.appendChild(alertDiv);
+
+            // 3초 후 메시지 사라짐
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+
+        // 예측 버튼 업데이트 함수
+        function updatePredictionButtons(matchId, selectedTeamId) {
+            // 해당 경기의 모든 버튼 찾기 (같은 matchId 값을 가진 폼들)
+            const matchForms = document.querySelectorAll(`form input[name="matchId"][value="${matchId}"]`);
+
+            matchForms.forEach(input => {
+                const form = input.closest('form');
+                const teamIdInput = form.querySelector('input[name="teamId"]');
+                const button = form.querySelector('button');
+
+                if (!teamIdInput || !button) return;
+
+                const currentTeamId = teamIdInput.value;
+
+                if (currentTeamId === selectedTeamId) {
+                    // 선택된 팀 버튼 스타일 업데이트
+                    button.classList.remove('bg-gray-200', 'text-gray-800');
+                    button.classList.add('bg-blue-500', 'text-white');
+
+                    // 체크 아이콘 추가 (이미 있으면 추가하지 않음)
+                    if (!button.querySelector('.fas.fa-check-circle')) {
+                        if (button.firstChild) {
+                            // 기존 텍스트 노드 앞에 아이콘 추가
+                            const icon = document.createElement('i');
+                            icon.className = 'fas fa-check-circle mr-1';
+                            button.insertBefore(icon, button.firstChild);
+                        } else {
+                            // 버튼이 비어있으면 아이콘만 추가
+                            const icon = document.createElement('i');
+                            icon.className = 'fas fa-check-circle mr-1';
+                            button.appendChild(icon);
+                        }
+                    }
+                } else {
+                    // 선택되지 않은 팀 버튼 스타일 업데이트
+                    button.classList.remove('bg-blue-500', 'text-white');
+                    button.classList.add('bg-gray-200', 'text-gray-800');
+
+                    // 체크 아이콘 제거
+                    const icon = button.querySelector('.fas.fa-check-circle');
+                    if (icon) icon.remove();
+                }
+            });
+        }
+    });
+</script>
 </body>
 </html>
