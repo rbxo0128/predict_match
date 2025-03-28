@@ -6,7 +6,7 @@ WORKDIR /app
 COPY . .
 
 # npm install 및 빌드 (tailwind CSS 처리를 위해)
-RUN apt-get update && apt-get install -y nodejs npm
+RUN apk update && apk add --no-cache nodejs npm
 RUN npm install
 RUN npm run build:css
 
