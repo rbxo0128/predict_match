@@ -81,7 +81,6 @@ src/main/webapp/
 
 ![LCK 경기 예측 서비스 아키텍처](https://github.com/rbxo0128/predict_match/raw/main/docs/architecture.svg)
 
-> **참고**: 위 다이어그램을 보려면 `docs/architecture.svg` 파일이 저장소에 존재해야 합니다. SVG 파일을 다운로드한 후 프로젝트의 `docs` 폴더에 저장하세요.
 
 ### 시스템 구성 요소
 
