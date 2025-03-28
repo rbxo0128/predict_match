@@ -46,21 +46,6 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    public Optional<User> authenticateUser(String email, String password) throws Exception {
-        Optional<User> userOptional = userRepository.findByEmail(email);
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if (passwordEncoder.matches(password, user.password())) {
-                // 로그인 성공 시 last_login 업데이트
-                userRepository.updateLastLogin(user.userId());
-                return userOptional;
-            }
-        }
-
-        return Optional.empty();
-    }
-
     public Optional<User> findByEmail(String email) throws Exception {
         return userRepository.findByEmail(email);
     }
