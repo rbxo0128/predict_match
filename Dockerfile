@@ -5,11 +5,6 @@ WORKDIR /app
 # 전체 프로젝트 복사
 COPY . .
 
-# npm install 및 빌드 (tailwind CSS 처리를 위해)
-RUN apk update && apk add --no-cache nodejs npm
-RUN npm install
-RUN npm run build:css
-
 # Maven 빌드
 RUN mvn clean package -DskipTests
 
