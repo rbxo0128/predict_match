@@ -1,0 +1,263 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <!-- 배경 -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+    
+    <!-- 컨테이너 그라디언트 -->
+    <linearGradient id="container-gradient-blue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+    
+    <linearGradient id="container-gradient-green" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    
+    <linearGradient id="container-gradient-purple" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#6d28d9" />
+    </linearGradient>
+    
+    <linearGradient id="container-gradient-orange" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    
+    <linearGradient id="container-gradient-red" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+    
+    <!-- 화살표 정의 -->
+    <marker id="arrow-blue" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L0,8 L10,4 Z" fill="#3b82f6" />
+    </marker>
+    
+    <marker id="arrow-green" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L0,8 L10,4 Z" fill="#10b981" />
+    </marker>
+    
+    <marker id="arrow-purple" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L0,8 L10,4 Z" fill="#8b5cf6" />
+    </marker>
+    
+    <marker id="arrow-orange" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L0,8 L10,4 Z" fill="#f59e0b" />
+    </marker>
+    
+    <marker id="arrow-red" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L0,8 L10,4 Z" fill="#ef4444" />
+    </marker>
+    
+    <!-- 아이콘 -->
+    <symbol id="icon-user" viewBox="0 0 24 24">
+      <circle cx="12" cy="8" r="5" fill="#9ca3af" />
+      <path d="M3,22 C3,17 7,13 12,13 C17,13 21,17 21,22" fill="#9ca3af" />
+    </symbol>
+    
+    <symbol id="icon-code" viewBox="0 0 24 24">
+      <path d="M8,4 L2,12 L8,20 M16,4 L22,12 L16,20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" />
+    </symbol>
+    
+    <symbol id="icon-server" viewBox="0 0 24 24">
+      <rect x="2" y="2" width="20" height="8" rx="2" fill="none" stroke="white" stroke-width="2" />
+      <rect x="2" y="14" width="20" height="8" rx="2" fill="none" stroke="white" stroke-width="2" />
+      <circle cx="6" cy="6" r="1" fill="white" />
+      <circle cx="6" cy="18" r="1" fill="white" />
+    </symbol>
+    
+    <symbol id="icon-database" viewBox="0 0 24 24">
+      <path d="M12,2 C6.5,2 2,4 2,7 L2,17 C2,20 6.5,22 12,22 C17.5,22 22,20 22,17 L22,7 C22,4 17.5,2 12,2 Z" fill="none" stroke="white" stroke-width="2" />
+      <path d="M2,7 C2,10 6.5,12 12,12 C17.5,12 22,10 22,7" fill="none" stroke="white" stroke-width="2" />
+      <path d="M2,12 C2,15 6.5,17 12,17 C17.5,17 22,15 22,12" fill="none" stroke="white" stroke-width="2" />
+    </symbol>
+    
+    <symbol id="icon-crawler" viewBox="0 0 24 24">
+      <path d="M10,2 L14,2 L14,6 L18,6 L18,10 L22,10 L22,14 L18,14 L18,18 L14,18 L14,22 L10,22 L10,18 L6,18 L6,14 L2,14 L2,10 L6,10 L6,6 L10,6 Z" fill="none" stroke="white" stroke-width="2" />
+      <circle cx="12" cy="12" r="3" fill="white" />
+    </symbol>
+    
+    <symbol id="icon-api" viewBox="0 0 24 24">
+      <rect x="2" y="6" width="20" height="12" rx="2" fill="none" stroke="white" stroke-width="2" />
+      <line x1="6" y1="10" x2="10" y2="14" stroke="white" stroke-width="2" stroke-linecap="round" />
+      <line x1="10" y1="10" x2="6" y2="14" stroke="white" stroke-width="2" stroke-linecap="round" />
+      <line x1="14" y1="12" x2="18" y2="12" stroke="white" stroke-width="2" stroke-linecap="round" />
+    </symbol>
+    
+    <symbol id="icon-schedule" viewBox="0 0 24 24">
+      <rect x="3" y="4" width="18" height="18" rx="2" fill="none" stroke="white" stroke-width="2" />
+      <line x1="3" y1="10" x2="21" y2="10" stroke="white" stroke-width="2" />
+      <line x1="8" y1="2" x2="8" y2="6" stroke="white" stroke-width="2" />
+      <line x1="16" y1="2" x2="16" y2="6" stroke="white" stroke-width="2" />
+      <circle cx="12" cy="16" r="4" fill="none" stroke="white" stroke-width="2" />
+      <path d="M12,14 L12,16 L14,16" stroke="white" stroke-width="2" stroke-linecap="round" />
+    </symbol>
+    
+    <!-- 컨테이너 그림자 -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(0, 0, 0, 0.15)" />
+    </filter>
+  </defs>
+  
+  <!-- 배경 -->
+  <rect width="1200" height="800" fill="url(#bg-gradient)" rx="20" ry="20" />
+  
+  <!-- 타이틀 및 설명 -->
+  <g>
+    <text x="600" y="60" font-family="Arial, sans-serif" font-size="36" font-weight="bold" text-anchor="middle" fill="#1e293b">LCK 경기 예측 서비스 아키텍처</text>
+    <text x="600" y="95" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#475569">Spring 프레임워크와 JSP 기반의 웹 애플리케이션 구조</text>
+  </g>
+  
+  <!-- 사용자 -->
+  <g transform="translate(100, 180)">
+    <circle cx="50" cy="50" r="40" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" filter="url(#shadow)" />
+    <use href="#icon-user" x="28" y="28" width="45" height="45" />
+    <text x="50" y="120" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#334155">사용자</text>
+    <text x="50" y="145" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#64748b">웹 브라우저</text>
+  </g>
+  
+  <!-- 웹 프론트엔드 -->
+  <g transform="translate(250, 150)">
+    <rect x="0" y="0" width="200" height="150" rx="10" ry="10" fill="url(#container-gradient-blue)" filter="url(#shadow)" />
+    <use href="#icon-code" x="20" y="20" width="30" height="30" />
+    <text x="60" y="42" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white">웹 프론트엔드</text>
+    <line x1="20" y1="60" x2="180" y2="60" stroke="rgba(255,255,255,0.3)" stroke-width="2" />
+    
+    <!-- 프론트엔드 내부 컴포넌트 -->
+    <rect x="20" y="75" width="160" height="25" rx="5" ry="5" fill="rgba(255,255,255,0.2)" />
+    <text x="100" y="93" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">JSP</text>
+    
+    <rect x="20" y="110" width="160" height="25" rx="5" ry="5" fill="rgba(255,255,255,0.2)" />
+    <text x="100" y="128" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">TailwindCSS</text>
+  </g>
+  
+  <!-- 백엔드 서버 -->
+  <g transform="translate(550, 100)">
+    <rect x="0" y="0" width="250" height="300" rx="10" ry="10" fill="url(#container-gradient-green)" filter="url(#shadow)" />
+    <use href="#icon-server" x="20" y="20" width="30" height="30" />
+    <text x="60" y="42" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white">백엔드 서버</text>
+    <text x="125" y="70" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="rgba(255,255,255,0.8)">Spring Framework</text>
+    <line x1="20" y1="85" x2="230" y2="85" stroke="rgba(255,255,255,0.3)" stroke-width="2" />
+    
+    <!-- 백엔드 내부 레이어 -->
+    <rect x="20" y="100" width="210" height="35" rx="5" ry="5" fill="rgba(255,255,255,0.2)" />
+    <text x="125" y="123" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="white">Controllers</text>
+    
+    <rect x="20" y="150" width="210" height="35" rx="5" ry="5" fill="rgba(255,255,255,0.2)" />
+    <text x="125" y="173" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="white">Services</text>
+    
+    <rect x="20" y="200" width="210" height="35" rx="5" ry="5" fill="rgba(255,255,255,0.2)" />
+    <text x="125" y="223" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="white">Repositories</text>
+    
+    <rect x="20" y="250" width="210" height="35" rx="5" ry="5" fill="rgba(255,255,255,0.2)" />
+    <text x="125" y="273" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="white">Configuration</text>
+  </g>
+  
+  <!-- 데이터베이스 -->
+  <g transform="translate(565, 480)">
+    <rect x="0" y="0" width="220" height="120" rx="10" ry="10" fill="url(#container-gradient-purple)" filter="url(#shadow)" />
+    <use href="#icon-database" x="20" y="20" width="30" height="30" />
+    <text x="60" y="42" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white">데이터베이스</text>
+    <line x1="20" y1="60" x2="200" y2="60" stroke="rgba(255,255,255,0.3)" stroke-width="2" />
+    
+    <!-- 데이터베이스 테이블 -->
+    <rect x="20" y="75" width="180" height="30" rx="5" ry="5" fill="rgba(255,255,255,0.2)" />
+    <text x="110" y="95" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">MySQL 9.2.0</text>
+  </g>
+  
+  <!-- 웹 크롤링 -->
+  <g transform="translate(900, 150)">
+    <rect x="0" y="0" width="200" height="120" rx="10" ry="10" fill="url(#container-gradient-orange)" filter="url(#shadow)" />
+    <use href="#icon-crawler" x="20" y="20" width="30" height="30" />
+    <text x="60" y="42" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white">웹 크롤링</text>
+    <line x1="20" y1="60" x2="180" y2="60" stroke="rgba(255,255,255,0.3)" stroke-width="2" />
+    
+    <!-- 크롤링 라이브러리 -->
+    <rect x="20" y="75" width="160" height="30" rx="5" ry="5" fill="rgba(255,255,255,0.2)" />
+    <text x="100" y="95" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">Jsoup 1.15.3</text>
+  </g>
+  
+  <!-- 외부 API -->
+  <g transform="translate(900, 310)">
+    <rect x="0" y="0" width="200" height="120" rx="10" ry="10" fill="url(#container-gradient-red)" filter="url(#shadow)" />
+    <use href="#icon-api" x="20" y="20" width="30" height="30" />
+    <text x="60" y="42" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white">외부 데이터</text>
+    <line x1="20" y1="60" x2="180" y2="60" stroke="rgba(255,255,255,0.3)" stroke-width="2" />
+    
+    <!-- 외부 API 소스 -->
+    <rect x="20" y="75" width="160" height="30" rx="5" ry="5" fill="rgba(255,255,255,0.2)" />
+    <text x="100" y="95" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">네이버 스포츠</text>
+  </g>
+  
+  <!-- 스케줄러 -->
+  <g transform="translate(900, 480)">
+    <rect x="0" y="0" width="200" height="120" rx="10" ry="10" fill="url(#container-gradient-green)" filter="url(#shadow)" />
+    <use href="#icon-schedule" x="20" y="20" width="30" height="30" />
+    <text x="60" y="42" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white">스케줄러</text>
+    <line x1="20" y1="60" x2="180" y2="60" stroke="rgba(255,255,255,0.3)" stroke-width="2" />
+    
+    <!-- 스케줄러 작업 -->
+    <rect x="20" y="75" width="160" height="30" rx="5" ry="5" fill="rgba(255,255,255,0.2)" />
+    <text x="100" y="95" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">PredictionProcessor</text>
+  </g>
+  
+  <!-- 연결선 -->
+  <!-- 사용자 → 웹 프론트엔드 -->
+  <path d="M190,200 C210,200 220,200 250,200" fill="none" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow-blue)" />
+  
+  <!-- 웹 프론트엔드 → 백엔드 서버 -->
+  <path d="M450,190 C480,190 520,190 550,190" fill="none" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrow-green)" />
+  
+  <!-- 백엔드 서버 → 웹 프론트엔드 -->
+  <path d="M550,240 C510,240 490,240 450,240" fill="none" stroke="#10b981" stroke-width="3" marker-end="url(#arrow-blue)" />
+  
+  <!-- 백엔드 서버 → 데이터베이스 -->
+  <path d="M675,400 L675,480" fill="none" stroke="#10b981" stroke-width="3" marker-end="url(#arrow-purple)" />
+  
+  <!-- 데이터베이스 → 백엔드 서버 -->
+  <path d="M620,480 L620,400" fill="none" stroke="#8b5cf6" stroke-width="3" marker-end="url(#arrow-green)" />
+  
+  <!-- 백엔드 서버 → 웹 크롤링 -->
+  <path d="M800,190 C840,190 860,190 900,190" fill="none" stroke="#10b981" stroke-width="3" marker-end="url(#arrow-orange)" />
+  
+  <!-- 웹 크롤링 → 외부 API -->
+  <path d="M1000,270 L1000,310" fill="none" stroke="#f59e0b" stroke-width="3" marker-end="url(#arrow-red)" />
+  
+  <!-- 스케줄러 → 백엔드 서버 -->
+  <path d="M900,540 L865,540 C830,540 830,370 800,370" fill="none" stroke="#10b981" stroke-width="3" marker-end="url(#arrow-green)" />
+
+  <!-- 외부 API → 웹 크롤링 -->
+  <path d="M900,370 L865,370 C840,370 840,270 900,270" fill="none" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-orange)" />
+  
+  <!-- 프로세스 흐름 설명 -->
+  <g transform="translate(150, 650)">
+    <rect x="0" y="0" width="900" height="120" rx="10" ry="10" fill="white" filter="url(#shadow)" />
+    <text x="20" y="35" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#0f172a">주요 데이터 흐름</text>
+    
+    <rect x="20" y="50" width="30" height="8" rx="4" ry="4" fill="#3b82f6" />
+    <text x="60" y="58" font-family="Arial, sans-serif" font-size="14" fill="#334155">사용자 요청 및 UI 상호작용</text>
+    
+    <rect x="240" y="50" width="30" height="8" rx="4" ry="4" fill="#10b981" />
+    <text x="280" y="58" font-family="Arial, sans-serif" font-size="14" fill="#334155">데이터 처리 및 비즈니스 로직</text>
+    
+    <rect x="500" y="50" width="30" height="8" rx="4" ry="4" fill="#8b5cf6" />
+    <text x="540" y="58" font-family="Arial, sans-serif" font-size="14" fill="#334155">데이터 저장 및 조회</text>
+    
+    <rect x="700" y="50" width="30" height="8" rx="4" ry="4" fill="#f59e0b" />
+    <text x="740" y="58" font-family="Arial, sans-serif" font-size="14" fill="#334155">데이터 수집</text>
+    
+    <line x1="20" y1="70" x2="880" y2="70" stroke="#e2e8f0" stroke-width="2" />
+    
+    <text x="20" y="95" font-family="Arial, sans-serif" font-size="14" fill="#334155" width="860">1. 사용자는 JSP 기반 UI를 통해 LCK 경기 결과를 예측합니다.</text>
+    <text x="20" y="115" font-family="Arial, sans-serif" font-size="14" fill="#334155" width="860">2. 서버는 예측 데이터를 처리하고, 스케줄러는 경기 결과에 따라 포인트를 계산합니다.</text>
+  </g>
+  
+  <!-- 참고 정보 -->
+  <g transform="translate(600, 790)">
+    <text font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#64748b">© 2025 LCK 경기 예측 서비스</text>
+  </g>
+</svg>
