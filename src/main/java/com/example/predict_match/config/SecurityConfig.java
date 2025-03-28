@@ -15,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -65,10 +66,17 @@ public class SecurityConfig {
                 }
 
                 User user = userOptional.get();
-                return new org.springframework.security.core.userdetails.User(
+                Collection<SimpleGrantedAuthority> authorities = Collections.singletonList(
+                        new SimpleGrantedAuthority("ROLE_" + user.role())
+                );
+
+                return new CustomUserDetails(
                         user.email(),
                         user.password(),
-                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.role()))
+                        user.username(),  // 실제 사용자 이름
+                        user.userId(),
+                        authorities,
+                        user.isActive()
                 );
             } catch (Exception e) {
                 throw new RuntimeException("Error loading user", e);

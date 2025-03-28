@@ -414,7 +414,7 @@
           <div class="user-profile">
             <i class="fas fa-user text-blue-400 mr-2"></i>
             <span class="text-sm text-white mr-2">
-                                <sec:authentication property="principal.username" />
+                                <sec:authentication property="principal.displayName" />
                             </span>
             <span class="user-points">
                                 <i class="fas fa-coins mr-1"></i> ${user.point()} P
