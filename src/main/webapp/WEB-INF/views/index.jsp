@@ -227,6 +227,25 @@
             border-radius: 8px;
             padding: 40px;
         }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                min-height: auto !important;
+                padding-bottom: 320px !important;
+            }
+
+            .hero-content {
+                max-width: 100% !important;
+                text-align: center;
+            }
+
+            .hero-section > div:last-child {
+                top: auto !important;
+                right: 50% !important;
+                bottom: 40px !important;
+                transform: translateX(50%) !important;
+            }
+        }
     </style>
 </head>
 <body class="hexagon-bg">
@@ -287,16 +306,18 @@
 
 <!-- Hero Section -->
 <div class="lck-container py-8">
-    <div class="hero-section" data-aos="fade-up">
+    <div class="hero-section" data-aos="fade-up" style="position: relative; min-height: 500px;">
         <div class="hero-overlay"></div>
-        <div class="hero-content p-8">
+
+        <!-- 텍스트 영역 - 왼쪽에 배치, 너비 제한 -->
+        <div class="hero-content p-8" style="max-width: 60%; position: relative; z-index: 10;">
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
                 LCK 경기 결과를<br>
                 예측하고<br>
                 <span class="text-blue-400">포인트</span>를 획득하세요!
             </h1>
             <p class="text-xl text-gray-300 mb-8 max-w-2xl">
-                좋아하는 팀의 승리를 응원하고 정확한 예측으로 포인트를 쌓아보세요.
+                좋아하는 팀의 승리를 응원하고 정확한 예측으로 포인트를 쌓아보세요. <br>
                 매주 업데이트되는 경기 일정과 실시간 순위표를 확인할 수 있습니다.
             </p>
             <div class="flex flex-wrap gap-4">
@@ -309,6 +330,11 @@
                     <i class="fas fa-gamepad mr-2"></i> 경기 예측하기
                 </a>
             </div>
+        </div>
+
+        <!-- 이미지 영역 - 오른쪽에 절대 위치 지정 -->
+        <div style="position: absolute; top: 50%; right: 40px; transform: translateY(-50%); z-index: 10;">
+            <img src="/images/logo.png" alt="LCK" style="width: 500px; height: auto; object-fit: contain;">
         </div>
     </div>
 </div>

@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/", "/login", "/login-process", "/signup", "/asset/**").permitAll()
+                        .requestMatchers("/", "/login", "/login-process", "/signup", "/images/**", "/asset/**").permitAll()
                         .requestMatchers("/predict/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

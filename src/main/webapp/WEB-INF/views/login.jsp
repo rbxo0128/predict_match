@@ -23,12 +23,30 @@
       background-color: #0a0e13;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%231a2136' fill-opacity='0.15' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     }
+    .login-image-container {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .login-image-container {
+        display: block;
+        width: 50%;
+        background: linear-gradient(135deg, rgba(10, 14, 19, 0.7) 0%, rgba(26, 33, 54, 0.7) 100%), url('https://images.contentstack.io/v3/assets/bltad9188aa9a70543a/blt711d7b66ed0d5efb/5e70728fc7e156403cf09bf2/lck-og-image-2020.jpg');
+        background-size: cover;
+        background-position: center;
+        padding: 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        color: white;
+      }
+    }
 
     .login-container {
       min-height: 100vh;
       display: flex;
-      align-items: center;
-      justify-content: center;
+      /*align-items: center;*/
+      /*justify-content: center;*/
     }
 
     .login-card {
@@ -255,23 +273,23 @@
   </style>
 </head>
 <body class="hexagon-bg">
-<div class="flex min-h-screen">
+<div class="login-container">
   <!-- 왼쪽 이미지 섹션 -->
-  <div class="hidden md:block w-1/2 login-image">
+  <div class="login-image-container">
     <div class="max-w-md">
-      <h2>LCK 경기 예측</h2>
-      <p>승부를 예측하고 포인트를 획득하세요!</p>
+      <h2 class="text-4xl font-bold mb-6">LCK 경기 예측</h2>
+      <p class="text-xl mb-8">승부를 예측하고 포인트를 획득하세요!</p>
       <ul class="feature-list">
-        <li>
-          <i class="fas fa-check-circle"></i>
+        <li class="flex mb-5">
+          <i class="fas fa-check-circle text-blue-400 mr-3 mt-1"></i>
           <p>실시간으로 업데이트되는 LCK 경기 일정을 확인하세요</p>
         </li>
-        <li>
-          <i class="fas fa-check-circle"></i>
+        <li class="flex mb-5">
+          <i class="fas fa-check-circle text-blue-400 mr-3 mt-1"></i>
           <p>정확한 예측으로 포인트를 획득하고 순위에 도전하세요</p>
         </li>
-        <li>
-          <i class="fas fa-check-circle"></i>
+        <li class="flex mb-5">
+          <i class="fas fa-check-circle text-blue-400 mr-3 mt-1"></i>
           <p>다른 팬들과 함께 e스포츠의 열기를 느껴보세요</p>
         </li>
       </ul>
@@ -373,7 +391,6 @@
       </div>
     </div>
   </div>
-</div>
 </div>
 </body>
 </html>
