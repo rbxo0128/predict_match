@@ -519,8 +519,8 @@
             <c:forEach var="pred" items="${predictions}" varStatus="status">
               <tr class="prediction-row">
                 <td>
-                  <div class="text-white font-medium">${fn:substring(pred.match().match_date(), 0, 10)}</div>
-                  <div class="text-xs text-gray-400 mt-1">${fn:substring(pred.match().match_date(), 11, 16)}</div>
+                  <div class="text-white font-medium">${fn:substring(pred.match().match_date(), 0, 11)}</div>
+                  <div class="text-xs text-gray-400 mt-1">${fn:substring(pred.match().match_date(), 11, 17)}</div>
                 </td>
                 <td>
                   <div class="flex items-center justify-center space-x-2">

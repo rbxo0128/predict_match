@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
@@ -246,6 +248,96 @@
                 transform: translateX(50%) !important;
             }
         }
+        /* 새로운 경기 카드 컨텐츠 레이아웃 */
+        .match-content-new {
+            padding: 20px;
+            position: relative;
+            height: 180px; /* 고정 높이 */
+        }
+
+        /* 팀 컨테이너 */
+        .team-container {
+            position: absolute;
+            width: 40%;
+            text-align: center;
+        }
+
+        /* 왼쪽 팀 */
+        .team-left {
+            top: 20px;
+            left: 5%;
+        }
+
+        /* 오른쪽 팀 */
+        .team-right {
+            top: 20px;
+            right: 5%;
+        }
+
+        /* 팀 로고 */
+        .team-logo {
+            width: 60px;
+            height: 60px;
+            background-color: #1a2136;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 0 auto 10px;
+        }
+
+        /* 팀 이름 */
+        .team-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            max-width: 100%;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-align: center;
+            height: 40px; /* 고정 높이 */
+            margin: 0 auto;
+        }
+
+        /* VS 컨테이너 - 항상 중앙 고정 */
+        .vs-container {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        /* VS 배지 */
+        .vs-badge {
+            width: 40px;
+            height: 40px;
+            background-color: #1a2136;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #8e98ae;
+            margin: 0 auto 5px;
+        }
+
+        /* VS 텍스트 (정규시즌) */
+        .vs-text {
+            font-size: 0.75rem;
+            color: #8e98ae;
+        }
+
+        /* 예측 버튼 컨테이너 */
+        .predict-button-container {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+        }
     </style>
 </head>
 <body class="hexagon-bg">
@@ -343,100 +435,111 @@
 <div class="lck-container py-12">
     <div class="text-center mb-10" data-aos="fade-up">
         <span class="text-blue-400 font-semibold uppercase tracking-wider">다가오는 경기</span>
-        <h2 class="section-title text-white">오늘의 LCK 매치업</h2>
-        <p class="text-gray-400 max-w-2xl mx-auto">
-            오늘 펼쳐질 경기를 확인하고 승자를 예측해보세요.
-        </p>
+        <c:choose>
+            <c:when test="${isToday}">
+                <h2 class="section-title text-white">오늘의 LCK 매치업</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    오늘 펼쳐질 경기를 확인하고 승자를 예측해보세요.
+                </p>
+            </c:when>
+            <c:when test="${hasMatches}">
+                <h2 class="section-title text-white">다음 예정된 LCK 매치업</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                        ${nextMatchDate}에 펼쳐질 경기를 확인하고 승자를 예측해보세요.
+                </p>
+            </c:when>
+            <c:otherwise>
+                <h2 class="section-title text-white">예정된 경기 정보</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    현재 예정된 경기가 없습니다. 경기 일정 페이지에서 업데이트를 확인해보세요.
+                </p>
+            </c:otherwise>
+        </c:choose>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="200">
-        <!-- 경기 카드 1 -->
-        <div class="match-card">
-            <div class="match-header">
-                    <span class="flex items-center">
-                        <i class="fas fa-calendar-day mr-2"></i> 오늘 18:00
-                    </span>
-                <span class="text-xs px-2 py-1 bg-blue-900 rounded-full">BO3</span>
-            </div>
-            <div class="match-content">
-                <div class="flex items-center justify-between">
-                    <div class="flex flex-col items-center w-5/12">
-                        <div class="team-logo">T1</div>
-                        <span class="font-medium">T1</span>
-                    </div>
-                    <div class="flex flex-col items-center w-2/12">
-                        <span class="vs-badge">VS</span>
-                        <span class="text-xs text-gray-500 mt-1">정규시즌</span>
-                    </div>
-                    <div class="flex flex-col items-center w-5/12">
-                        <div class="team-logo">DK</div>
-                        <span class="font-medium">DK</span>
-                    </div>
-                </div>
-                <a href="/matches" class="btn btn-blue w-full mt-4">
-                    <i class="fas fa-chart-pie mr-1"></i> 예측하기
-                </a>
-            </div>
-        </div>
+    <c:choose>
+        <c:when test="${hasMatches}">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="200">
+                <!-- 동적으로 경기 카드 생성 -->
+                <c:forEach var="match" items="${todayMatches}">
+                    <div class="match-card">
+                        <div class="match-header">
+                            <span class="flex items-center">
+                                <i class="fas fa-calendar-day mr-2"></i>
+                                <c:choose>
+                                    <c:when test="${isToday}">오늘</c:when>
+                                    <c:otherwise>
+                                        <c:set var="matchDateStr" value="${match.match().match_date()}" />
+                                        <c:out value="${matchDateStr}" />
+                                    </c:otherwise>
+                                </c:choose>
+                            </span>
+                            <span class="text-xs px-2 py-1 bg-blue-900 rounded-full">BO3</span>
+                        </div>
 
-        <!-- 경기 카드 2 -->
-        <div class="match-card">
-            <div class="match-header">
-                    <span class="flex items-center">
-                        <i class="fas fa-calendar-day mr-2"></i> 오늘 20:00
-                    </span>
-                <span class="text-xs px-2 py-1 bg-blue-900 rounded-full">BO3</span>
-            </div>
-            <div class="match-content">
-                <div class="flex items-center justify-between">
-                    <div class="flex flex-col items-center w-5/12">
-                        <div class="team-logo">GEN</div>
-                        <span class="font-medium">젠지</span>
-                    </div>
-                    <div class="flex flex-col items-center w-2/12">
-                        <span class="vs-badge">VS</span>
-                        <span class="text-xs text-gray-500 mt-1">정규시즌</span>
-                    </div>
-                    <div class="flex flex-col items-center w-5/12">
-                        <div class="team-logo">KT</div>
-                        <span class="font-medium">KT</span>
-                    </div>
-                </div>
-                <a href="/matches" class="btn btn-blue w-full mt-4">
-                    <i class="fas fa-chart-pie mr-1"></i> 예측하기
-                </a>
-            </div>
-        </div>
+                        <!-- 완전히 새로운 경기 컨텐츠 레이아웃 -->
+                        <div class="match-content-new">
+                            <!-- 팀1 -->
+                            <div class="team-container team-left">
+                                <div class="team-logo">
+                                    <c:set var="team1Name" value="${match.team1().teamName()}" />
+                                    <c:if test="${fn:length(team1Name) > 3}">
+                                        <c:out value="${fn:substring(team1Name, 0, 2)}" />
+                                    </c:if>
+                                    <c:if test="${fn:length(team1Name) <= 3}">
+                                        <c:out value="${team1Name}" />
+                                    </c:if>
+                                </div>
+                                <div class="team-name">
+                                    <c:out value="${match.team1().teamName()}" />
+                                </div>
+                            </div>
 
-        <!-- 경기 카드 3 -->
-        <div class="match-card">
-            <div class="match-header">
-                    <span class="flex items-center">
-                        <i class="fas fa-calendar-day mr-2"></i> 내일 17:00
-                    </span>
-                <span class="text-xs px-2 py-1 bg-blue-900 rounded-full">BO3</span>
+                            <!-- VS 중앙에 고정 -->
+                            <div class="vs-container">
+                                <div class="vs-badge">VS</div>
+                                <div class="vs-text">정규시즌</div>
+                            </div>
+
+                            <!-- 팀2 -->
+                            <div class="team-container team-right">
+                                <div class="team-logo">
+                                    <c:set var="team2Name" value="${match.team2().teamName()}" />
+                                    <c:if test="${fn:length(team2Name) > 3}">
+                                        <c:out value="${fn:substring(team2Name, 0, 2)}" />
+                                    </c:if>
+                                    <c:if test="${fn:length(team2Name) <= 3}">
+                                        <c:out value="${team2Name}" />
+                                    </c:if>
+                                </div>
+                                <div class="team-name">
+                                    <c:out value="${match.team2().teamName()}" />
+                                </div>
+                            </div>
+
+                            <!-- 예측 버튼 -->
+                            <div class="predict-button-container">
+                                <a href="/matches" class="btn btn-blue w-full">
+                                    <i class="fas fa-chart-pie mr-1"></i> 예측하기
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
             </div>
-            <div class="match-content">
-                <div class="flex items-center justify-between">
-                    <div class="flex flex-col items-center w-5/12">
-                        <div class="team-logo">DRX</div>
-                        <span class="font-medium">DRX</span>
-                    </div>
-                    <div class="flex flex-col items-center w-2/12">
-                        <span class="vs-badge">VS</span>
-                        <span class="text-xs text-gray-500 mt-1">정규시즌</span>
-                    </div>
-                    <div class="flex flex-col items-center w-5/12">
-                        <div class="team-logo">NS</div>
-                        <span class="font-medium">농심</span>
-                    </div>
-                </div>
-                <a href="/matches" class="btn btn-blue w-full mt-4">
-                    <i class="fas fa-chart-pie mr-1"></i> 예측하기
+        </c:when>
+        <c:otherwise>
+            <!-- 경기가 없을 때 표시할 내용 -->
+            <div class="lck-card p-8 text-center" data-aos="fade-up" data-aos-delay="200">
+                <i class="fas fa-calendar-times text-gray-400 text-6xl mb-4"></i>
+                <h3 class="text-xl font-semibold text-white mb-2">현재 진행 중인 경기가 없습니다</h3>
+                <p class="text-gray-400 mb-4">다음 경기 일정을 기다려주세요. 곧 새로운 경기가 업데이트될 예정입니다.</p>
+                <a href="/matches" class="btn btn-blue inline-block">
+                    <i class="fas fa-list mr-1"></i> 모든 경기 일정 보기
                 </a>
             </div>
-        </div>
-    </div>
+        </c:otherwise>
+    </c:choose>
 
     <div class="text-center mt-8" data-aos="fade-up" data-aos-delay="300">
         <a href="/matches" class="inline-flex items-center text-blue-400 hover:text-blue-300">
