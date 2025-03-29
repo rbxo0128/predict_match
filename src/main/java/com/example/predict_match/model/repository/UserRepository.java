@@ -1,11 +1,14 @@
 package com.example.predict_match.model.repository;
 
 import com.example.predict_match.model.dto.User;
+import com.example.predict_match.model.dto.UserRankDTO;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -106,5 +109,61 @@ public class UserRepository implements JDBCRepository {
             pstmt.setLong(1, userId);
             pstmt.executeUpdate();
         }
+    }
+
+    // UserRepository.java에 추가
+    public List<UserRankDTO> findTopUsersByPoints(int limit) throws SQLException, ClassNotFoundException {
+        List<UserRankDTO> users = new ArrayList<>();
+        String query = "SELECT u.user_id, u.username, u.point, " +
+                "(SELECT COUNT(*) FROM USERS WHERE point > u.point) + 1 AS user_rank, " +
+                "COALESCE((SELECT (SUM(CASE WHEN pm.is_correct = true THEN 1 ELSE 0 END) * 100.0 / COUNT(*)) " +
+                "FROM PREDICTED_MATCHES pm WHERE pm.user_id = u.user_id AND pm.is_correct IS NOT NULL), 0) AS accuracy " +
+                "FROM USERS u ORDER BY u.point DESC LIMIT ?";
+
+        try (Connection conn = getConnection(URL, USER, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setInt(1, limit);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                users.add(new UserRankDTO(
+                        rs.getLong("user_id"),
+                        rs.getString("username"),
+                        rs.getInt("point"),
+                        rs.getDouble("accuracy"),
+                        rs.getInt("user_rank")
+                ));
+            }
+        }
+
+        return users;
+    }
+
+    public UserRankDTO findUserRankById(Long userId) throws SQLException, ClassNotFoundException {
+        String query = "SELECT u.user_id, u.username, u.point, " +
+                "(SELECT COUNT(*) FROM USERS WHERE point > u.point) + 1 AS user_rank, " +
+                "COALESCE((SELECT (SUM(CASE WHEN pm.is_correct = true THEN 1 ELSE 0 END) * 100.0 / COUNT(*)) " +
+                "FROM PREDICTED_MATCHES pm WHERE pm.user_id = u.user_id AND pm.is_correct IS NOT NULL), 0) AS accuracy " +
+                "FROM USERS u WHERE u.user_id = ?";
+
+        try (Connection conn = getConnection(URL, USER, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setLong(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return new UserRankDTO(
+                        rs.getLong("user_id"),
+                        rs.getString("username"),
+                        rs.getInt("point"),
+                        rs.getDouble("accuracy"),
+                        rs.getInt("user_rank")
+                );
+            }
+        }
+
+        return null;
     }
 }

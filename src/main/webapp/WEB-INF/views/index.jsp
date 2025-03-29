@@ -136,16 +136,6 @@
             display: inline-block;
         }
 
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(90deg, #0050e0 0%, #0a6cff 100%);
-            border-radius: 3px;
-        }
 
         .match-card {
             background-color: #101722;
@@ -338,6 +328,134 @@
             left: 20px;
             right: 20px;
         }
+        .rank-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .rank-table th {
+            background-color: #13192a;
+            color: #9aa4b8;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.75rem;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #1a2136;
+        }
+
+        .rank-table tr:nth-child(odd) {
+            background-color: #0f1520;
+        }
+
+        .rank-table tr:nth-child(even) {
+            background-color: #121927;
+        }
+
+        .rank-table tr:hover {
+            background-color: #151b2e;
+        }
+
+        .rank-table td {
+            padding: 16px;
+            border-bottom: 1px solid #1a2136;
+            vertical-align: middle;
+        }
+
+        .team-row {
+            transition: transform 0.2s ease;
+        }
+
+        .team-row:hover {
+            transform: translateX(5px);
+        }
+
+        .rank-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+
+        .rank-1 {
+            background: linear-gradient(135deg, #ffd700 0%, #e6b800 100%);
+            color: #000;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .rank-2 {
+            background: linear-gradient(135deg, #c0c0c0 0%, #a6a6a6 100%);
+            color: #000;
+        }
+
+        .rank-3 {
+            background: linear-gradient(135deg, #cd7f32 0%, #b36a1d 100%);
+            color: #000;
+        }
+
+        .rank-other {
+            background-color: #1a2136;
+            color: #8e98ae;
+        }
+
+        .win-rate-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #1a2136;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .win-rate-progress {
+            height: 100%;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #0050e0 0%, #0a6cff 100%);
+        }
+
+        .stat-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-right: 4px;
+        }
+
+        .win-badge {
+            background-color: rgba(4, 193, 102, 0.15);
+            color: #04c166;
+        }
+
+        .loss-badge {
+            background-color: rgba(228, 38, 38, 0.15);
+            color: #ff5c5c;
+        }
+
+        .win-rate-text {
+            font-weight: 600;
+        }
+
+        .progress-80-100 {
+            color: #04c166;
+        }
+
+        .progress-60-80 {
+            color: #4e9fff;
+        }
+
+        .progress-40-60 {
+            color: #f9b529;
+        }
+
+        .progress-0-40 {
+            color: #ff5c5c;
+        }
+
     </style>
 </head>
 <body class="hexagon-bg">
@@ -434,7 +552,6 @@
 <!-- 다가오는 경기 섹션 -->
 <div class="lck-container py-12">
     <div class="text-center mb-10" data-aos="fade-up">
-        <span class="text-blue-400 font-semibold uppercase tracking-wider">다가오는 경기</span>
         <c:choose>
             <c:when test="${isToday}">
                 <h2 class="section-title text-white">오늘의 LCK 매치업</h2>
@@ -549,10 +666,95 @@
     </div>
 </div>
 
+<!-- LCK 팀 순위 섹션 -->
+<div class="lck-container py-12">
+    <div class="text-center mb-10" data-aos="fade-up">
+        <h2 class="section-title text-white">LCK 팀 순위</h2>
+        <p class="text-gray-400 max-w-2xl mx-auto">
+            최신 업데이트된 LCK 팀들의 순위를 확인하세요.
+        </p>
+    </div>
+
+    <!-- 순위표 카드 -->
+    <div class="lck-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="card-header flex items-center">
+            <i class="fas fa-trophy mr-2 text-yellow-400"></i>
+            <span>LCK 팀 순위</span>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="rank-table w-full">
+                <thead>
+                <tr>
+                    <th class="p-4 text-left">순위</th>
+                    <th class="p-4 text-left">팀</th>
+                    <th class="p-4 text-center">승/패</th>
+                    <th class="p-4 text-center">승률</th>
+                    <th class="p-4 text-center hidden md:table-cell">그래프</th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach var="stats" items="${teamStats}" varStatus="status">
+                    <tr class="team-row ${status.index == 0 ? 'pulse-gold' : ''}">
+                        <td class="p-4">
+                            <div class="flex items-center justify-center">
+                                <div class="rank-number ${status.index == 0 ? 'rank-1' : status.index == 1 ? 'rank-2' : status.index == 2 ? 'rank-3' : 'rank-other'}">
+                                        ${status.index + 1}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-4">
+                            <div class="team-name">
+                                <c:choose>
+                                    <c:when test="${status.index < 3}">
+                                        <span class="text-white">${stats.team().teamName()}</span>
+                                        <c:if test="${status.index == 0}">
+                                                <span class="ml-2 text-yellow-400">
+                                                    <i class="fas fa-crown"></i>
+                                                </span>
+                                        </c:if>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span>${stats.team().teamName()}</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                        </td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center space-x-2">
+                                    <span class="stat-badge win-badge">
+                                        ${stats.wins()}승
+                                    </span>
+                                <span class="stat-badge loss-badge">
+                                        ${stats.losses()}패
+                                    </span>
+                            </div>
+                        </td>
+                        <td class="p-4 text-center">
+                            <div class="win-rate-text
+                                        ${stats.winRate() >= 80 ? 'progress-80-100' :
+                                          stats.winRate() >= 60 ? 'progress-60-80' :
+                                          stats.winRate() >= 40 ? 'progress-40-60' : 'progress-0-40'}">
+                                <fmt:formatNumber value="${stats.winRate()}" pattern="#0.0" />%
+                            </div>
+                        </td>
+                        <td class="p-4 hidden md:table-cell">
+                            <div class="win-rate-bar">
+                                <div class="win-rate-progress" style="width: ${stats.winRate()}%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
 <!-- 주요 기능 소개 -->
 <div class="lck-container py-12">
     <div class="text-center mb-10" data-aos="fade-up">
-        <span class="text-blue-400 font-semibold uppercase tracking-wider">LCK 예측</span>
         <h2 class="section-title text-white">전문가처럼 경기를 분석하고 예측하세요</h2>
         <p class="text-gray-400 max-w-2xl mx-auto">
             LCK 경기를 더 재미있게 즐기는 방법, 경기 결과를 예측하고 포인트를 획득하세요.

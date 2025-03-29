@@ -1,10 +1,11 @@
 // 새로운 HomeService 클래스
 package com.example.predict_match.service;
 
-import com.example.predict_match.model.dto.MatchWithTeams;
+import com.example.predict_match.model.dto.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,9 +15,11 @@ import java.util.stream.Collectors;
 public class MainPageService {
 
     private final MatchService matchService;
+    private final TeamService teamService;
 
-    public MainPageService(MatchService matchService) {
+    public MainPageService(MatchService matchService, TeamService teamService) {
         this.matchService = matchService;
+        this.teamService = teamService;
     }
 
     /**
@@ -38,6 +41,10 @@ public class MainPageService {
             // 오늘 날짜의 경기 필터링
             List<MatchWithTeams> todayMatches = filterMatchesByDate(allMatches, today, currentYear, datePattern);
 
+            List<Team> teams = teamService.getAllTeams();
+            List<Match> allrankMatches = matchService.getAllMatches();
+            List<TeamStats> teamStats = calculateTeamStats(teams, allrankMatches);
+
             // 오늘 경기가 없다면, 미래의 가장 가까운 경기를 찾음
             if (todayMatches.isEmpty()) {
                 List<MatchWithTeams> upcomingMatches = findUpcomingMatches(allMatches, today, currentYear, datePattern);
@@ -51,10 +58,11 @@ public class MainPageService {
                             upcomingMatches.subList(0, matchCount),
                             true,
                             false,
-                            nextMatchDate
+                            nextMatchDate,
+                            teamStats
                     );
                 } else {
-                    return new HomePageData(null, false, false, null);
+                    return new HomePageData(null, false, false, null, null);
                 }
             } else {
                 int matchCount = Math.min(todayMatches.size(), 2);
@@ -62,13 +70,14 @@ public class MainPageService {
                         todayMatches.subList(0, matchCount),
                         true,
                         true,
-                        null
+                        null,
+                        teamStats
                 );
             }
         } catch (Exception e) {
             // 로그 기록
             e.printStackTrace();
-            return new HomePageData(null, false, false, null, true);
+            return new HomePageData(null, false, false, null, true, null);
         }
     }
 
@@ -173,46 +182,45 @@ public class MainPageService {
         }
     }
 
-    /**
-     * 홈페이지 데이터를 담는 내부 클래스
-     */
-    public static class HomePageData {
-        private final List<MatchWithTeams> matches;
-        private final boolean hasMatches;
-        private final boolean isToday;
-        private final String nextMatchDate;
-        private final boolean loadError;
+    private List<TeamStats> calculateTeamStats(List<Team> teams, List<Match> matches) {
+        List<TeamStats> result = new ArrayList<>();
 
-        public HomePageData(List<MatchWithTeams> matches, boolean hasMatches, boolean isToday, String nextMatchDate) {
-            this(matches, hasMatches, isToday, nextMatchDate, false);
+        // 각 팀별로 진행
+        for (Team team : teams) {
+            int teamId = team.teamId();
+            int wins = 0;
+            int losses = 0;
+
+            // 팀이 참여한 모든 경기를 찾아 승/패 계산
+            for (Match match : matches) {
+                // 경기가 완료된 경우만 계산
+                if (match.is_finished() == 1) {
+                    // 팀1로 참여한 경우
+                    if (match.team1_id() == teamId) {
+                        if (match.winner_id() == teamId) {
+                            wins++;
+                        } else {
+                            losses++;
+                        }
+                    }
+                    // 팀2로 참여한 경우
+                    else if (match.team2_id() == teamId) {
+                        if (match.winner_id() == teamId) {
+                            wins++;
+                        } else {
+                            losses++;
+                        }
+                    }
+                }
+            }
+
+            // 승률 계산 (경기가 없는 경우 0으로 처리)
+            double winRate = wins + losses > 0 ? (double) wins / (wins + losses) * 100 : 0;
+
+            // 팀 통계 추가
+            result.add(new TeamStats(team, wins, losses, winRate));
         }
 
-        public HomePageData(List<MatchWithTeams> matches, boolean hasMatches, boolean isToday, String nextMatchDate, boolean loadError) {
-            this.matches = matches;
-            this.hasMatches = hasMatches;
-            this.isToday = isToday;
-            this.nextMatchDate = nextMatchDate;
-            this.loadError = loadError;
-        }
-
-        public List<MatchWithTeams> getMatches() {
-            return matches;
-        }
-
-        public boolean isHasMatches() {
-            return hasMatches;
-        }
-
-        public boolean isToday() {
-            return isToday;
-        }
-
-        public String getNextMatchDate() {
-            return nextMatchDate;
-        }
-
-        public boolean isLoadError() {
-            return loadError;
-        }
+        return result;
     }
 }

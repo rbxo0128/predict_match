@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LCK 팀 순위</title>
+    <title>LCK 예측 포인트 랭킹</title>
     <link href="${pageContext.request.contextPath}/asset/css/output.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -320,7 +320,7 @@
             <div class="flex items-center">
                 <a href="/" class="text-blue-400 font-bold text-xl flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                     </svg>
                     LCK 예측
                 </a>
@@ -372,7 +372,7 @@
 <div class="lck-container py-8">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold text-white flex items-center">
-            <i class="fas fa-trophy mr-3 text-yellow-400"></i> LCK 2025 팀 순위
+            <i class="fas fa-trophy mr-3 text-yellow-400"></i> LCK 예측 포인트 랭킹
         </h1>
         <div class="text-gray-400 text-sm flex items-center">
             <i class="fas fa-sync-alt mr-1"></i> 최종 업데이트:
@@ -380,11 +380,11 @@
         </div>
     </div>
 
-    <!-- Team Rankings Table -->
+    <!-- User Rankings Table -->
     <div class="lck-card mb-8">
         <div class="card-header flex items-center">
-            <i class="fas fa-list-ol mr-2 text-blue-400"></i>
-            <span>팀 순위표</span>
+            <i class="fas fa-crown mr-2 text-yellow-400"></i>
+            <span>유저 포인트 랭킹</span>
         </div>
         <div class="overflow-x-auto">
             <table class="rank-table">
@@ -397,29 +397,30 @@
                     </th>
                     <th class="w-3/12">
                         <div class="flex items-center">
-                            <i class="fas fa-users mr-1 text-blue-400"></i> 팀명
+                            <i class="fas fa-user mr-1 text-blue-400"></i> 닉네임
                         </div>
                     </th>
                     <th class="w-2/12 text-center">
                         <div class="flex items-center justify-center">
-                            <i class="fas fa-gamepad mr-1 text-blue-400"></i> 승/패
+                            <i class="fas fa-coins mr-1 text-blue-400"></i> 포인트
                         </div>
                     </th>
                     <th class="w-2/12 text-center">
                         <div class="flex items-center justify-center">
-                            <i class="fas fa-percentage mr-1 text-blue-400"></i> 승률
+                            <i class="fas fa-percentage mr-1 text-blue-400"></i> 예측 정확도
                         </div>
                     </th>
                     <th class="w-4/12 text-center hidden md:table-cell">
                         <div class="flex items-center justify-center">
-                            <i class="fas fa-chart-bar mr-1 text-blue-400"></i> 그래프
+                            <i class="fas fa-chart-bar mr-1 text-blue-400"></i> 통계
                         </div>
                     </th>
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach var="stats" items="${teamStats}" varStatus="status">
-                    <tr class="team-row ${status.index == 0 ? 'pulse-gold' : ''}">
+                <!-- 상위 10명의 사용자 표시 -->
+                <c:forEach var="userRank" items="${topUsers}" varStatus="status">
+                    <tr class="team-row ${userRank.userId == currentUser.userId ? 'bg-blue-900 bg-opacity-20' : ''} ${status.index == 0 ? 'pulse-gold' : ''}">
                         <td>
                             <div class="flex items-center justify-center">
                                 <div class="rank-number ${status.index == 0 ? 'rank-1' : status.index == 1 ? 'rank-2' : status.index == 2 ? 'rank-3' : 'rank-other'}">
@@ -428,129 +429,97 @@
                             </div>
                         </td>
                         <td>
-                            <div class="team-name">
+                            <div class="user-name flex items-center">
                                 <c:choose>
                                     <c:when test="${status.index < 3}">
-                                        <span class="text-white">${stats.team().teamName()}</span>
+                                        <span class="text-white font-medium">${userRank.username}</span>
                                         <c:if test="${status.index == 0}">
-                                                    <span class="ml-2 text-yellow-400">
-                                                        <i class="fas fa-crown"></i>
-                                                    </span>
+                                            <span class="ml-2 text-yellow-400">
+                                                <i class="fas fa-crown"></i>
+                                            </span>
                                         </c:if>
                                     </c:when>
                                     <c:otherwise>
-                                        <span>${stats.team().teamName()}</span>
+                                        <span>${userRank.username}</span>
                                     </c:otherwise>
                                 </c:choose>
+                                <c:if test="${userRank.userId == currentUser.userId}">
+                                    <span class="ml-2 badge badge-blue">나</span>
+                                </c:if>
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="flex items-center justify-center space-x-2">
-                                        <span class="stat-badge win-badge">
-                                            ${stats.wins()}승
-                                        </span>
-                                <span class="stat-badge loss-badge">
-                                            ${stats.losses()}패
-                                        </span>
+                            <div class="user-points-display font-semibold">
+                                <span class="text-yellow-400"><i class="fas fa-coins mr-1"></i></span>
+                                    ${userRank.point} P
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="win-rate-text
-                                        ${stats.winRate() >= 80 ? 'progress-80-100' :
-                                          stats.winRate() >= 60 ? 'progress-60-80' :
-                                          stats.winRate() >= 40 ? 'progress-40-60' : 'progress-0-40'}">
-                                <fmt:formatNumber value="${stats.winRate()}" pattern="#0.0" />%
+                            <div class="accuracy-text
+                                        ${userRank.accuracy >= 80 ? 'progress-80-100' :
+                                          userRank.accuracy >= 60 ? 'progress-60-80' :
+                                          userRank.accuracy >= 40 ? 'progress-40-60' : 'progress-0-40'}">
+                                <fmt:formatNumber value="${userRank.accuracy}" pattern="#0.0" />%
                             </div>
                         </td>
                         <td class="hidden md:table-cell">
-                            <div class="win-rate-bar">
-                                <div class="win-rate-progress" style="width: ${stats.winRate()}%"></div>
+                            <div class="accuracy-bar">
+                                <div class="accuracy-progress ${userRank.accuracy >= 70 ? 'high-accuracy' : userRank.accuracy >= 40 ? 'medium-accuracy' : 'low-accuracy'}"
+                                     style="width: ${userRank.accuracy}%"></div>
                             </div>
                         </td>
                     </tr>
-
-                    <!-- Playoff cutoff line after 6th team -->
-                    <c:if test="${status.index == 5}">
-                        <tr>
-                            <td colspan="5" class="p-0">
-                                <div class="playoff-line">
-                                    <div class="playoff-indicator">
-                                        플레이오프 진출선
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </c:if>
                 </c:forEach>
+
+                <!-- 현재 사용자가 Top 10에 없을 경우 구분선과 함께 표시 -->
+                <c:if test="${!isCurrentUserInTop && currentUser != null}">
+                    <tr>
+                        <td colspan="5" class="p-0">
+                            <div class="playoff-line">
+                                <div class="playoff-indicator">
+                                    내 랭킹
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="bg-blue-900 bg-opacity-20">
+                        <td>
+                            <div class="flex items-center justify-center">
+                                <div class="rank-number rank-other">
+                                        ${currentUserRank.rank}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="user-name flex items-center">
+                                <span>${currentUser.username()}</span>
+                                <span class="ml-2 badge badge-blue">나</span>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="user-points-display font-semibold">
+                                <span class="text-yellow-400"><i class="fas fa-coins mr-1"></i></span>
+                                    ${currentUser.point()} P
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="accuracy-text
+                                        ${currentUserRank.accuracy >= 80 ? 'progress-80-100' :
+                                          currentUserRank.accuracy >= 60 ? 'progress-60-80' :
+                                          currentUserRank.accuracy >= 40 ? 'progress-40-60' : 'progress-0-40'}">
+                                <fmt:formatNumber value="${currentUserRank.accuracy}" pattern="#0.0" />%
+                            </div>
+                        </td>
+                        <td class="hidden md:table-cell">
+                            <div class="accuracy-bar">
+                                <div class="accuracy-progress ${currentUserRank.accuracy >= 70 ? 'high-accuracy' : currentUserRank.accuracy >= 40 ? 'medium-accuracy' : 'low-accuracy'}"
+                                     style="width: ${currentUserRank.accuracy}%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </c:if>
                 </tbody>
             </table>
-        </div>
-    </div>
-
-    <!-- Playoff Information Card -->
-    <div class="lck-card mb-8">
-        <div class="card-header flex items-center">
-            <i class="fas fa-info-circle mr-2 text-green-400"></i>
-            <span>플레이오프 진출 안내</span>
-        </div>
-        <div class="info-card">
-            <div class="flex items-center space-x-2 mb-4">
-                <span class="inline-block w-4 h-4 bg-blue-900 rounded"></span>
-                <span class="text-sm">플레이오프 진출권 (상위 6개팀)</span>
-            </div>
-            <div class="relative w-full h-6 bg-gray-800 rounded-lg overflow-hidden">
-                <div class="h-full bg-gradient-to-r from-blue-800 to-blue-600" style="width: 60%"></div>
-                <div class="absolute inset-0 flex items-center px-4 text-xs font-medium text-white">
-                    상위 6개 팀 진출
-                </div>
-            </div>
-            <p class="mt-4 text-sm text-gray-400">
-                현재 정규 시즌이 진행 중입니다. 상위 6개 팀이 플레이오프에 진출하게 됩니다.
-                플레이오프 대진표는 정규 시즌 종료 후 확정됩니다.
-            </p>
-        </div>
-    </div>
-
-    <!-- LCK Ranking System Information -->
-    <div class="lck-card">
-        <div class="card-header flex items-center">
-            <i class="fas fa-question-circle mr-2 text-purple-400"></i>
-            <span>LCK 순위 결정 방식</span>
-        </div>
-        <div class="info-card">
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="info-icon bg-blue-900 text-blue-400">
-                        <i class="fas fa-sync"></i>
-                    </div>
-                    <h3 class="text-lg font-medium text-white mb-2">더블 라운드 로빈</h3>
-                    <p class="text-gray-400 text-sm">정규 시즌은 더블 라운드 로빈 방식으로 진행됩니다. 각 팀은 다른 모든 팀과 2번씩, 총 18경기를 치릅니다.</p>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-icon bg-green-900 text-green-400">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3 class="text-lg font-medium text-white mb-2">플레이오프 진출</h3>
-                    <p class="text-gray-400 text-sm">상위 6개 팀이 플레이오프에 진출합니다. 1-2위 팀은 자동으로 플레이오프 2라운드에 진출합니다.</p>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-icon bg-yellow-900 text-yellow-400">
-                        <i class="fas fa-balance-scale"></i>
-                    </div>
-                    <h3 class="text-lg font-medium text-white mb-2">동률 규정</h3>
-                    <p class="text-gray-400 text-sm">동일한 승률일 경우, 상대 전적을 먼저 고려하고, 그 후에 경기 시간을 고려합니다.</p>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-icon bg-red-900 text-red-400">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <h3 class="text-lg font-medium text-white mb-2">챔피언십 포인트</h3>
-                    <p class="text-gray-400 text-sm">스프링과 서머 시즌의 성적에 따라 월드 챔피언십 출전 자격이 결정됩니다.</p>
-                </div>
-            </div>
         </div>
     </div>
 </div>
