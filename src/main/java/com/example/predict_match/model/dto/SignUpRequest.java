@@ -17,16 +17,4 @@ public record SignUpRequest(
         @NotBlank(message = "비밀번호는 필수입니다")
         @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다")
         String password
-) {
-        public String getUsername() {
-                return username;
-        }
-
-        public String getEmail() {
-                return email;
-        }
-
-        public String getPassword() {
-                return password;
-        }
-}
+) { }

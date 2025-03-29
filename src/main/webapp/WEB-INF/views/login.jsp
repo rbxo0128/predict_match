@@ -381,6 +381,7 @@
 
         <!-- 회원가입 링크 -->
         <div class="login-footer">
+        <div class="login-footer">
           <p class="text-gray-400 mb-4">
             계정이 없으신가요?
           </p>
