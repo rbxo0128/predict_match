@@ -380,7 +380,7 @@
                 <thead>
                 <tr>
                     <th class="w-1/12">
-                        <div class="flex items-center">
+                        <div class="flex items-center justify-center">
                             <i class="fas fa-hashtag mr-1 text-blue-400"></i> 순위
                         </div>
                     </th>

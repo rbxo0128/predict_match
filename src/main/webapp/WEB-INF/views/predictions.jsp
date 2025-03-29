@@ -499,19 +499,29 @@
             <thead>
             <tr>
               <th class="w-1/6">
-                <i class="far fa-calendar-alt mr-1 text-blue-400"></i> 경기 일시
+                <div class="flex">
+                  <i class="far fa-calendar-alt mr-1 text-blue-400"></i> 경기 일시
+                </div>
               </th>
               <th class="w-1/4 text-center">
-                <i class="fas fa-gamepad mr-1 text-blue-400"></i> 매치업
+                <div class="flex items-center justify-center">
+                  <i class="fas fa-gamepad mr-1 text-blue-400"></i> 매치업
+                </div>
               </th>
               <th class="w-1/6 text-center">
-                <i class="fas fa-user-check mr-1 text-blue-400"></i> 내 예측
+                <div class="flex items-center justify-center">
+                  <i class="fas fa-user-check mr-1 text-blue-400"></i> 내 예측
+                </div>
               </th>
               <th class="w-1/6 text-center">
-                <i class="fas fa-trophy mr-1 text-blue-400"></i> 결과
+                <div class="flex items-center justify-center">
+                  <i class="fas fa-trophy mr-1 text-blue-400"></i> 결과
+                </div>
               </th>
               <th class="w-1/6 text-center">
-                <i class="fas fa-info-circle mr-1 text-blue-400"></i> 상태
+                <div class="flex items-center justify-center">
+                  <i class="fas fa-info-circle mr-1 text-blue-400"></i> 상태
+                </div>
               </th>
             </tr>
             </thead>
