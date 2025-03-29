@@ -299,17 +299,6 @@
             justify-content: center;
             margin-bottom: 12px;
         }
-
-        /* Animation for highlighting top teams */
-        @keyframes pulse-gold {
-            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
-        }
-
-        .pulse-gold {
-            animation: pulse-gold 2s infinite;
-        }
     </style>
 </head>
 <body class="hexagon-bg">
@@ -420,7 +409,7 @@
                 <tbody>
                 <!-- 상위 10명의 사용자 표시 -->
                 <c:forEach var="userRank" items="${topUsers}" varStatus="status">
-                    <tr class="team-row ${userRank.userId == currentUser.userId ? 'bg-blue-900 bg-opacity-20' : ''} ${status.index == 0 ? 'pulse-gold' : ''}">
+                    <tr class="team-row ${userRank.username() == currentUserRank.username() ? 'bg-blue-900 bg-opacity-20' : ''} ${status.index == 0 ? 'pulse-gold' : ''}">
                         <td>
                             <div class="flex items-center justify-center">
                                 <div class="rank-number ${status.index == 0 ? 'rank-1' : status.index == 1 ? 'rank-2' : status.index == 2 ? 'rank-3' : 'rank-other'}">
@@ -432,7 +421,7 @@
                             <div class="user-name flex items-center">
                                 <c:choose>
                                     <c:when test="${status.index < 3}">
-                                        <span class="text-white font-medium">${userRank.username}</span>
+                                        <span class="text-white font-medium">${userRank.username()}</span>
                                         <c:if test="${status.index == 0}">
                                             <span class="ml-2 text-yellow-400">
                                                 <i class="fas fa-crown"></i>
@@ -440,10 +429,10 @@
                                         </c:if>
                                     </c:when>
                                     <c:otherwise>
-                                        <span>${userRank.username}</span>
+                                        <span>${userRank.username()}</span>
                                     </c:otherwise>
                                 </c:choose>
-                                <c:if test="${userRank.userId == currentUser.userId}">
+                                <c:if test="${userRank.username() == currentUserRank.username()}">
                                     <span class="ml-2 badge badge-blue">나</span>
                                 </c:if>
                             </div>
@@ -451,69 +440,60 @@
                         <td class="text-center">
                             <div class="user-points-display font-semibold">
                                 <span class="text-yellow-400"><i class="fas fa-coins mr-1"></i></span>
-                                    ${userRank.point} P
+                                    ${userRank.point()} P
                             </div>
                         </td>
                         <td class="text-center">
                             <div class="accuracy-text
-                                        ${userRank.accuracy >= 80 ? 'progress-80-100' :
-                                          userRank.accuracy >= 60 ? 'progress-60-80' :
-                                          userRank.accuracy >= 40 ? 'progress-40-60' : 'progress-0-40'}">
-                                <fmt:formatNumber value="${userRank.accuracy}" pattern="#0.0" />%
+                                        ${userRank.accuracy() >= 80 ? 'progress-80-100' :
+                                          userRank.accuracy() >= 60 ? 'progress-60-80' :
+                                          userRank.accuracy() >= 40 ? 'progress-40-60' : 'progress-0-40'}">
+                                <fmt:formatNumber value="${userRank.accuracy()}" pattern="#0.0" />%
                             </div>
                         </td>
                         <td class="hidden md:table-cell">
                             <div class="accuracy-bar">
-                                <div class="accuracy-progress ${userRank.accuracy >= 70 ? 'high-accuracy' : userRank.accuracy >= 40 ? 'medium-accuracy' : 'low-accuracy'}"
-                                     style="width: ${userRank.accuracy}%"></div>
+                                <div class="accuracy-progress ${userRank.accuracy() >= 70 ? 'high-accuracy' : userRank.accuracy() >= 40 ? 'medium-accuracy' : 'low-accuracy'}"
+                                     style="width: ${userRank.accuracy()}%"></div>
                             </div>
                         </td>
                     </tr>
                 </c:forEach>
 
                 <!-- 현재 사용자가 Top 10에 없을 경우 구분선과 함께 표시 -->
-                <c:if test="${!isCurrentUserInTop && currentUser != null}">
-                    <tr>
-                        <td colspan="5" class="p-0">
-                            <div class="playoff-line">
-                                <div class="playoff-indicator">
-                                    내 랭킹
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
+                <c:if test="${!isCurrentUserInTop && currentUserRank != null}">
                     <tr class="bg-blue-900 bg-opacity-20">
                         <td>
                             <div class="flex items-center justify-center">
                                 <div class="rank-number rank-other">
-                                        ${currentUserRank.rank}
+                                        ${currentUserRank.rank()}
                                 </div>
                             </div>
                         </td>
                         <td>
                             <div class="user-name flex items-center">
-                                <span>${currentUser.username()}</span>
+                                <span>${currentUserRank.username()}</span>
                                 <span class="ml-2 badge badge-blue">나</span>
                             </div>
                         </td>
                         <td class="text-center">
                             <div class="user-points-display font-semibold">
                                 <span class="text-yellow-400"><i class="fas fa-coins mr-1"></i></span>
-                                    ${currentUser.point()} P
+                                    ${currentUserRank.point()} P
                             </div>
                         </td>
                         <td class="text-center">
                             <div class="accuracy-text
-                                        ${currentUserRank.accuracy >= 80 ? 'progress-80-100' :
-                                          currentUserRank.accuracy >= 60 ? 'progress-60-80' :
-                                          currentUserRank.accuracy >= 40 ? 'progress-40-60' : 'progress-0-40'}">
-                                <fmt:formatNumber value="${currentUserRank.accuracy}" pattern="#0.0" />%
+                                        ${currentUserRank.accuracy() >= 80 ? 'progress-80-100' :
+                                          currentUserRank.accuracy() >= 60 ? 'progress-60-80' :
+                                          currentUserRank.accuracy() >= 40 ? 'progress-40-60' : 'progress-0-40'}">
+                                <fmt:formatNumber value="${currentUserRank.accuracy()}" pattern="#0.0" />%
                             </div>
                         </td>
                         <td class="hidden md:table-cell">
                             <div class="accuracy-bar">
-                                <div class="accuracy-progress ${currentUserRank.accuracy >= 70 ? 'high-accuracy' : currentUserRank.accuracy >= 40 ? 'medium-accuracy' : 'low-accuracy'}"
-                                     style="width: ${currentUserRank.accuracy}%"></div>
+                                <div class="accuracy-progress ${currentUserRank.accuracy() >= 70 ? 'high-accuracy' : currentUserRank.accuracy() >= 40 ? 'medium-accuracy' : 'low-accuracy'}"
+                                     style="width: ${currentUserRank.accuracy()}%"></div>
                             </div>
                         </td>
                     </tr>

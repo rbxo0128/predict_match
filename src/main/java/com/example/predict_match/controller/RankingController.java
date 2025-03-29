@@ -1,5 +1,6 @@
 package com.example.predict_match.controller;
 
+import com.example.predict_match.config.CustomUserDetails;
 import com.example.predict_match.model.dto.Match;
 import com.example.predict_match.model.dto.Team;
 import com.example.predict_match.model.dto.User;
@@ -35,21 +36,27 @@ public class RankingController {
 
             // 현재 로그인한 사용자 정보
             if (authentication != null && authentication.isAuthenticated()) {
-                UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-                Optional<User> userOptional = userService.findByEmail(userDetails.getUsername());
+                CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+                String currentUsername = userDetails.getDisplayName();
 
-                if (userOptional.isPresent()) {
-                    User currentUser = userOptional.get();
-                    model.addAttribute("currentUser", currentUser);
+                System.out.println("currentUsername = " + currentUsername);
 
-                    // 현재 사용자의 랭킹 정보
-                    UserRankDTO currentUserRank = userService.getUserRank(currentUser.userId());
+                // 현재 사용자가 Top 10에 있는지 확인
+                Optional<UserRankDTO> currentUserInTop = topUsers.stream()
+                        .filter(user -> user.username().equals(currentUsername))
+                        .findFirst();
+
+                if (currentUserInTop.isPresent()) {
+                    // Top 10에 있으면, 해당 정보 사용
+                    model.addAttribute("isCurrentUserInTop", true);
+                    model.addAttribute("currentUserRank", currentUserInTop.get());
+                } else {
+                    // Top 10에 없으면, 별도로 랭킹 정보만 가져옴
+                    Long userId = ((CustomUserDetails) userDetails).getUserId();
+                    UserRankDTO currentUserRank = userService.getUserRank(userId);
+                    model.addAttribute("isCurrentUserInTop", false);
                     model.addAttribute("currentUserRank", currentUserRank);
-
-                    // 현재 사용자가 Top 10에 포함되어 있는지 확인
-                    boolean isCurrentUserInTop = topUsers.stream()
-                            .anyMatch(user -> user.userId().equals(currentUser.userId()));
-                    model.addAttribute("isCurrentUserInTop", isCurrentUserInTop);
+                    System.out.println("currentUserRank = " + currentUserRank);
                 }
             }
 
