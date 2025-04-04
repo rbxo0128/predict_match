@@ -101,8 +101,9 @@ public class UserPredictionService {
                 Team team2 = teamMap.get(match.team2_id());
                 Team predictedTeam = teamMap.get(prediction.predictedWinnerId());
 
-                boolean isCorrect = match.is_finished() == 1 &&
-                        match.winner_id() == prediction.predictedWinnerId();
+                boolean isCorrect = prediction.isCorrect() != null ?
+                        prediction.isCorrect() :
+                        (match.is_finished() == 1 && match.winner_id() == prediction.predictedWinnerId());
 
                 result.add(new PredictionWithDetails(
                         prediction,

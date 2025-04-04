@@ -549,11 +549,14 @@
                     <c:when test="${pred.match().is_finished() == 1}">
                       <c:choose>
                         <c:when test="${pred.match().winner_id() == pred.team1().teamId()}">
-                          <span class="text-white">${pred.team1().teamName()} 승리</span>
+                          <span class="text-gray-400">${pred.team1().teamName()} 승리</span>
                         </c:when>
                         <c:when test="${pred.match().winner_id() == pred.team2().teamId()}">
-                          <span class="text-white">${pred.team2().teamName()} 승리</span>
+                          <span class="text-gray-400">${pred.team2().teamName()} 승리</span>
                         </c:when>
+                        <c:otherwise>
+                          <span class="text-gray-400">결과 없음</span>
+                        </c:otherwise>
                       </c:choose>
                     </c:when>
                     <c:otherwise>
@@ -564,21 +567,21 @@
                 <td class="text-center">
                   <c:choose>
                     <c:when test="${pred.match().is_finished() == 0}">
-                                                    <span class="badge badge-yellow">
-                                                        <i class="fas fa-clock mr-1"></i> 진행중
-                                                    </span>
-                    </c:when>
-                    <c:otherwise>
-                      <c:choose>
-                        <c:when test="${pred.isCorrect()}">
-                                                            <span class="badge badge-green">
-                                                                <i class="fas fa-plus-circle mr-1"></i> 정확 (+10P)
-                                                            </span>
-                        </c:when>
-                        <c:otherwise>
-                                                            <span class="badge badge-red">
-                                                                <i class="fas fa-times-circle mr-1"></i> 오답
-                                                            </span>
+                      <span class="badge badge-yellow">
+                        <i class="fas fa-clock mr-1"></i> 진행중
+                      </span>
+                                    </c:when>
+                                    <c:otherwise>
+                                      <c:choose>
+                                        <c:when test="${pred.isCorrect()}">
+                          <span class="badge badge-green">
+                            <i class="fas fa-plus-circle mr-1"></i> 정확 (+10P)
+                          </span>
+                                        </c:when>
+                                        <c:otherwise>
+                          <span class="badge badge-red">
+                            <i class="fas fa-times-circle mr-1"></i> 오답
+                          </span>
                         </c:otherwise>
                       </c:choose>
                     </c:otherwise>

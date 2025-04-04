@@ -27,7 +27,7 @@ public class MatchRepository implements JDBCRepository {
 
     public List<Match> check() throws Exception {
         try (Connection conn = getConnection(URL, USER, PASSWORD)) {
-            String query = "SELECT * FROM MATCHES ORDER BY match_id ASC";
+            String query = "SELECT * FROM SCHEDULER";
             try (PreparedStatement pstmt = conn.prepareStatement(query);
                  ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
