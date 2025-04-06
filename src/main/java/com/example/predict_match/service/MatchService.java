@@ -33,7 +33,7 @@ public class MatchService {
         LocalDateTime now = LocalDateTime.now();
         if (cachedMatches == null || lastFetchTime == null ||
                 Duration.between(lastFetchTime, now).compareTo(CACHE_DURATION) > 0) {
-            cachedMatches = matchRepository.check();
+            cachedMatches = matchRepository.findAll();
             lastFetchTime = now;
         }
         return cachedMatches;

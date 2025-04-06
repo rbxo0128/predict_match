@@ -25,7 +25,7 @@ public class MatchRepository implements JDBCRepository {
         this.jsoupRepository = jsoupRepository;
     }
 
-    public List<Match> check() throws Exception {
+    public void check() throws Exception {
         try (Connection conn = getConnection(URL, USER, PASSWORD)) {
             String query = "SELECT * FROM SCHEDULER";
             try (PreparedStatement pstmt = conn.prepareStatement(query);
@@ -48,7 +48,6 @@ public class MatchRepository implements JDBCRepository {
         } catch (Exception e) {
             logger.severe(e.getMessage());
         }
-        return findAll();
     }
 
 
