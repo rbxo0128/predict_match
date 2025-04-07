@@ -26,7 +26,7 @@ public class MainPageController {
             model.addAttribute("todayMatches", homeData.matches());
             model.addAttribute("hasMatches", homeData.hasMatches());
             model.addAttribute("isToday", homeData.isToday());
-            model.addAttribute("teamStats", homeData.teamStats());
+            model.addAttribute("teams", homeData.teams());
 
             if (homeData.nextMatchDate() != null) {
                 model.addAttribute("nextMatchDate", homeData.nextMatchDate());

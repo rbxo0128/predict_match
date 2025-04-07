@@ -42,8 +42,6 @@ public class MainPageService {
             List<MatchWithTeams> todayMatches = filterMatchesByDate(allMatches, today, currentYear, datePattern);
 
             List<Team> teams = teamService.getAllTeams();
-            List<Match> allrankMatches = matchService.getAllMatches();
-            List<TeamStats> teamStats = calculateTeamStats(teams, allrankMatches);
 
             // 오늘 경기가 없다면, 미래의 가장 가까운 경기를 찾음
             if (todayMatches.isEmpty()) {
@@ -59,7 +57,7 @@ public class MainPageService {
                             true,
                             false,
                             nextMatchDate,
-                            teamStats
+                            teams
                     );
                 } else {
                     return new MainPageData(null, false, false, null, null);
@@ -71,7 +69,7 @@ public class MainPageService {
                         true,
                         true,
                         null,
-                        teamStats
+                        teams
                 );
             }
         } catch (Exception e) {
@@ -180,47 +178,5 @@ public class MainPageService {
         } else {
             return nextMatchDate;
         }
-    }
-
-    private List<TeamStats> calculateTeamStats(List<Team> teams, List<Match> matches) {
-        List<TeamStats> result = new ArrayList<>();
-
-        // 각 팀별로 진행
-        for (Team team : teams) {
-            int teamId = team.teamId();
-            int wins = 0;
-            int losses = 0;
-
-            // 팀이 참여한 모든 경기를 찾아 승/패 계산
-            for (Match match : matches) {
-                // 경기가 완료된 경우만 계산
-                if (match.is_finished() == 1) {
-                    // 팀1로 참여한 경우
-                    if (match.team1_id() == teamId) {
-                        if (match.winner_id() == teamId) {
-                            wins++;
-                        } else {
-                            losses++;
-                        }
-                    }
-                    // 팀2로 참여한 경우
-                    else if (match.team2_id() == teamId) {
-                        if (match.winner_id() == teamId) {
-                            wins++;
-                        } else {
-                            losses++;
-                        }
-                    }
-                }
-            }
-
-            // 승률 계산 (경기가 없는 경우 0으로 처리)
-            double winRate = wins + losses > 0 ? (double) wins / (wins + losses) * 100 : 0;
-
-            // 팀 통계 추가
-            result.add(new TeamStats(team, wins, losses, winRate));
-        }
-
-        return result;
     }
 }

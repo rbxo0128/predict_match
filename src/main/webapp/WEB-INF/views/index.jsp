@@ -694,7 +694,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach var="stats" items="${teamStats}" varStatus="status">
+                <c:forEach var="stats" items="${teams}" varStatus="status">
                     <tr class="team-row ${status.index == 0 ? 'pulse-gold' : ''}">
                         <td class="p-4">
                             <div class="flex items-center justify-center">
@@ -707,7 +707,7 @@
                             <div class="team-name">
                                 <c:choose>
                                     <c:when test="${status.index < 3}">
-                                        <span class="text-white">${stats.team().teamName()}</span>
+                                        <span class="text-white">${stats.teamName()}</span>
                                         <c:if test="${status.index == 0}">
                                                 <span class="ml-2 text-yellow-400">
                                                     <i class="fas fa-crown"></i>
@@ -715,7 +715,7 @@
                                         </c:if>
                                     </c:when>
                                     <c:otherwise>
-                                        <span>${stats.team().teamName()}</span>
+                                        <span>${stats.teamName()}</span>
                                     </c:otherwise>
                                 </c:choose>
                             </div>
@@ -726,21 +726,22 @@
                                         ${stats.wins()}승
                                     </span>
                                 <span class="stat-badge loss-badge">
-                                        ${stats.losses()}패
+                                        ${stats.loses()}패
                                     </span>
                             </div>
                         </td>
+                        <c:set var="winRate" value="${stats.wins() / (stats.wins()+stats.loses()) * 100}" />
                         <td class="p-4 text-center">
                             <div class="win-rate-text
-                                        ${stats.winRate() >= 80 ? 'progress-80-100' :
-                                          stats.winRate() >= 60 ? 'progress-60-80' :
-                                          stats.winRate() >= 40 ? 'progress-40-60' : 'progress-0-40'}">
-                                <fmt:formatNumber value="${stats.winRate()}" pattern="#0.0" />%
+                                        ${winRate >= 80 ? 'progress-80-100' :
+                                          winRate >= 60 ? 'progress-60-80' :
+                                          winRate >= 40 ? 'progress-40-60' : 'progress-0-40'}">
+                                <fmt:formatNumber value="${winRate}" pattern="#0.0" />%
                             </div>
                         </td>
                         <td class="p-4 hidden md:table-cell">
                             <div class="win-rate-bar">
-                                <div class="win-rate-progress" style="width: ${stats.winRate()}%"></div>
+                                <div class="win-rate-progress" style="width: ${winRate}%"></div>
                             </div>
                         </td>
                     </tr>

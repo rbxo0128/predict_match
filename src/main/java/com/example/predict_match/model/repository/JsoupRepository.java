@@ -53,13 +53,11 @@ public class JsoupRepository {
                             int winnerId = 0;
                             if (isFinished == 1) {
                                 if (schedule.winner().equals("Home")){
-                                    winnerId = TeamId.fromAcronym(schedule.homeTeam().nameAcronym());
+                                    winnerId = team1Id;
                                 }
                                 else{
-                                    winnerId = TeamId.fromAcronym(schedule.awayTeam().nameAcronym());
+                                    winnerId = team2Id;
                                 }
-                            } else {
-                                winnerId = 0;
                             }
 
                             // Match 객체 생성 (매개변수 순서에 맞게 할당)

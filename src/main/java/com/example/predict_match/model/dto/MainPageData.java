@@ -8,10 +8,10 @@ public record MainPageData(
         boolean isToday,
         String nextMatchDate,
         boolean loadError,
-        List<TeamStats> teamStats
+        List<Team> teams
 ) {
     // 기본 생성자 오버로드 (loadError가 기본적으로 false)
-    public MainPageData(List<MatchWithTeams> matches, boolean hasMatches, boolean isToday, String nextMatchDate, List<TeamStats> teamStats) {
-        this(matches, hasMatches, isToday, nextMatchDate, false, teamStats);
+    public MainPageData(List<MatchWithTeams> matches, boolean hasMatches, boolean isToday, String nextMatchDate, List<Team> teams) {
+        this(matches, hasMatches, isToday, nextMatchDate, false, teams);
     }
 }

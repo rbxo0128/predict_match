@@ -321,7 +321,7 @@
             <i class="fas fa-gamepad mr-3 text-blue-400"></i> LCK 경기 일정
         </h1>
         <div class="text-gray-400 text-sm">
-            <i class="fas fa-info-circle mr-1"></i> 경기 시작 전까지 예측을 변경할 수 있습니다
+            <i class="fas fa-info-circle mr-1"></i> 경기 시작 1시간 전까지 예측을 변경할 수 있습니다
         </div>
     </div>
 
@@ -602,7 +602,6 @@
             || document.querySelector('input[name="_csrf"]')?.value;
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content')
             || "${_csrf.headerName}";
-
         // 모든 예측 폼에 이벤트 리스너 추가
         const predictionForms = document.querySelectorAll('form[action*="/matches/predict"]');
 
@@ -682,7 +681,6 @@
         // 메시지 표시 함수
         function showMessage(isSuccess, message) {
             // 기존 메시지 요소 제거
-            console.log(`안녕하세요 ${message}`)
             const existingMessages = document.querySelectorAll('.alert-message');
             existingMessages.forEach(el => el.remove());
 
@@ -726,15 +724,12 @@
 
         // 예측 버튼 업데이트 함수
         function updatePredictionButtons(matchId, selectedTeamId) {
-            console.log('버튼 업데이트: 매치 ID =', matchId, '선택된 팀 ID =', selectedTeamId);
-
             // 문자열로 변환
             matchId = String(matchId);
             selectedTeamId = String(selectedTeamId);
 
             // 모든 예측 폼을 스캔
             const allForms = document.querySelectorAll('form[action*="/matches/predict"]');
-            console.log('전체 예측 폼 수:', allForms.length);
 
             let matchFormsCount = 0;
 
@@ -751,13 +746,11 @@
                 // 현재 폼이 업데이트할 매치에 해당하는지 확인
                 if (currentMatchId === matchId) {
                     matchFormsCount++;
-                    console.log('매치 ID 일치 폼 발견:', currentMatchId, '팀 ID:', currentTeamId);
 
                     // 원래 팀 이름 가져오기
                     const teamNameText = form.getAttribute('data-team-name');
 
                     if (currentTeamId === selectedTeamId) {
-                        console.log('선택된 팀 버튼:', teamNameText);
                         // 선택된 팀 버튼 업데이트
                         button.className = 'btn-predict btn-blue animate-pulse';
                         button.disabled = false;
@@ -765,7 +758,6 @@
                         // 체크 아이콘과 팀 이름으로 내용 설정
                         button.innerHTML = '<i class="fas fa-check-circle mr-1"></i>' + teamNameText;
                     } else {
-                        console.log('선택되지 않은 팀 버튼:', teamNameText);
                         // 선택되지 않은 팀 버튼 업데이트
                         button.className = 'btn-predict btn-gray';
                         button.disabled = false;
@@ -776,7 +768,6 @@
                 }
             });
 
-            console.log('업데이트된 매치 폼 수:', matchFormsCount);
         }
     });
 </script>

@@ -7,9 +7,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class MatchPredictionService {
@@ -64,6 +69,12 @@ public class MatchPredictionService {
                 return ResponseEntity.ok(response);
             }
 
+            if (!isMatchPredictionAllowed(match)) {
+                response.put("success", false);
+                response.put("error", "경기 시작 1시간 전부터는 예측을 변경할 수 없습니다.");
+                return ResponseEntity.ok(response);
+            }
+
             // 유효한 팀인지 확인 (Team1 또는 Team2여야 함)
             if (match.team1_id() != teamId && match.team2_id() != teamId) {
                 response.put("success", false);
@@ -82,6 +93,45 @@ public class MatchPredictionService {
             response.put("success", false);
             response.put("error", "예측 처리 중 오류가 발생했습니다: " + e.getMessage());
             return ResponseEntity.ok(response);
+        }
+    }
+
+    private boolean isMatchPredictionAllowed(Match match) {
+        try {
+            // 경기 날짜 문자열 파싱 (04월 09일 (수) 17:00 형식)
+            String matchDateStr = match.match_date();
+
+            // 정규식을 사용하여 날짜 및 시간 추출
+            Pattern pattern = Pattern.compile("(\\d{2})월 (\\d{2})일 \\([월화수목금토일]\\) (\\d{2}):(\\d{2})");
+            Matcher matcher = pattern.matcher(matchDateStr);
+
+            if (!matcher.find()) {
+                // 날짜 형식이 맞지 않으면 기본적으로 예측 허용
+                return true;
+            }
+
+            int month = Integer.parseInt(matcher.group(1));
+            int day = Integer.parseInt(matcher.group(2));
+            int hour = Integer.parseInt(matcher.group(3));
+            int minute = Integer.parseInt(matcher.group(4));
+
+            // 현재 년도 가져오기
+            int currentYear = LocalDate.now().getYear();
+
+            // 경기 시간 생성
+            LocalDateTime matchDateTime = LocalDateTime.of(currentYear, month, day, hour, minute);
+
+            // 현재 시간
+            LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+
+            // 경기 시작 1시간 전
+            LocalDateTime cutoffTime = matchDateTime.minusHours(1);
+
+            // 현재 시간이 cutoffTime 이후인지 확인
+            return now.isBefore(cutoffTime);
+        } catch (Exception e) {
+            // 날짜 파싱 중 오류가 발생하면 기본적으로 예측 허용
+            return true;
         }
     }
 }
