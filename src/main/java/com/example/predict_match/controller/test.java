@@ -1,12 +1,11 @@
 package com.example.predict_match.controller;
 
-import com.example.predict_match.model.repository.JsoupRepository;
-import com.example.predict_match.model.repository.JsoupTeamRepository;
-import com.example.predict_match.model.repository.MatchRepository;
+import com.example.predict_match.model.repository.*;
+import com.example.predict_match.service.ScheduleService;
 
 public class test {
     public static void main(String[] args) throws Exception {
-        JsoupTeamRepository repository = new JsoupTeamRepository();
-        repository.getMatches();
+        ScheduleService scheduleService = new ScheduleService(new JsoupRepository(), new JsoupTeamRepository(), new ScheduleRepository(new JsoupRepository()), new MatchRepository(new JsoupRepository()), new TeamRepository());
+        scheduleService.check();
     }
 }

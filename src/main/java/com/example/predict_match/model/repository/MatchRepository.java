@@ -25,32 +25,6 @@ public class MatchRepository implements JDBCRepository {
         this.jsoupRepository = jsoupRepository;
     }
 
-    public void check() throws Exception {
-        try (Connection conn = getConnection(URL, USER, PASSWORD)) {
-            String query = "SELECT * FROM SCHEDULER";
-            try (PreparedStatement pstmt = conn.prepareStatement(query);
-                 ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    String lastUpdate = rs.getString("last_update_date");
-                    LocalDate dbDate = LocalDate.parse(lastUpdate);
-                    LocalDate today = LocalDate.now();
-
-                    if (dbDate.equals(today)) {
-                        logger.info("DB의 날짜와 오늘 날짜가 같습니다");
-                    }
-                    else {
-                        logger.info("DB의 날짜와 오늘 날짜가 다릅니다");
-                        List<Match> matches = jsoupRepository.getMatches(4);
-                        update(matches);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.severe(e.getMessage());
-        }
-    }
-
-
     public List<Match> findAll() throws Exception {
         logger.info("findAll 시작");
         List<Match> matches = new ArrayList<>();
@@ -162,13 +136,19 @@ public class MatchRepository implements JDBCRepository {
                     Team team1 = new Team(
                             rs.getInt("t1_id"),
                             rs.getString("t1_name"),
+                            rs.getInt("t1_rank"),
+                            rs.getInt("t1_rank"),
+                            rs.getInt("t1_rank"),
                             rs.getInt("t1_rank")
                     );
 
                     Team team2 = new Team(
                             rs.getInt("t2_id"),
                             rs.getString("t2_name"),
-                            rs.getInt("t2_rank")
+                            rs.getInt("t2_rank"),
+                            rs.getInt("t1_rank"),
+                            rs.getInt("t1_rank"),
+                            rs.getInt("t1_rank")
                     );
 
                     result.add(new MatchWithTeams(match, team1, team2, null));
