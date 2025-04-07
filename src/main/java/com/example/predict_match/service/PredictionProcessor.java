@@ -28,6 +28,7 @@ public class PredictionProcessor {
 
     // 정확한 예측에 대한 포인트 보상
     private static final int CORRECT_PREDICTION_POINTS = 10;
+    private static final int INCORRECT_PREDICTION_POINTS = -5;
 
     public PredictionProcessor(MatchRepository matchRepository,
                                PredictionRepository predictionRepository,
@@ -39,8 +40,7 @@ public class PredictionProcessor {
 
     /**
      * 매일 자정에 실행되어 경기 결과를 확인하고 포인트를 업데이트
-     */
-    @Scheduled(cron = "0 0 0 * * ?")  // 매일 자정에 실행
+     */// 매일 자정에 실행
     public void processFinishedMatches() {
         try {
             logger.info("Processing finished matches and updating user points...");
