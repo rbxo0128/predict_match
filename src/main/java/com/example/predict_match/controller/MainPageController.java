@@ -1,6 +1,6 @@
 package com.example.predict_match.controller;
 
-import com.example.predict_match.model.dto.HomePageData;
+import com.example.predict_match.model.dto.MainPageData;
 import com.example.predict_match.service.MainPageService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +20,7 @@ public class MainPageController {
     public String index(Model model) {
         try {
             // 서비스를 통해 데이터 가져오기
-            HomePageData homeData = mainPageService.getHomePageData();
+            MainPageData homeData = mainPageService.getMainPageData();
 
             // 모델에 데이터 추가
             model.addAttribute("todayMatches", homeData.matches());

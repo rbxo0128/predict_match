@@ -108,4 +108,6 @@ public class TeamRepository implements JDBCRepository {
         // 팀 이름으로 매핑된 ID 찾기
         return teamNameToId.getOrDefault(crawledTeamName, 0);
     }
+
+
 }

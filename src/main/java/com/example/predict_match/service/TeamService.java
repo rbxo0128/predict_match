@@ -21,4 +21,5 @@ public class TeamService {
     public Team getTeamById(int teamId) throws Exception {
         return teamRepository.findById(teamId);
     }
+
 }

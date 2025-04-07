@@ -26,7 +26,7 @@ public class MainPageService {
      * 오늘 날짜의 경기를 가져옵니다.
      * 오늘 경기가 없으면 미래의 가장 가까운 경기를 가져옵니다.
      */
-    public HomePageData getHomePageData() {
+    public MainPageData getMainPageData() {
         try {
             // 경기 일정을 가져옴
             List<MatchWithTeams> allMatches = matchService.getMatchesWithTeams();
@@ -54,7 +54,7 @@ public class MainPageService {
                     int matchCount = Math.min(upcomingMatches.size(), 2);
                     String nextMatchDate = extractNextMatchDate(upcomingMatches.get(0), datePattern);
 
-                    return new HomePageData(
+                    return new MainPageData(
                             upcomingMatches.subList(0, matchCount),
                             true,
                             false,
@@ -62,11 +62,11 @@ public class MainPageService {
                             teamStats
                     );
                 } else {
-                    return new HomePageData(null, false, false, null, null);
+                    return new MainPageData(null, false, false, null, null);
                 }
             } else {
                 int matchCount = Math.min(todayMatches.size(), 2);
-                return new HomePageData(
+                return new MainPageData(
                         todayMatches.subList(0, matchCount),
                         true,
                         true,
@@ -77,7 +77,7 @@ public class MainPageService {
         } catch (Exception e) {
             // 로그 기록
             e.printStackTrace();
-            return new HomePageData(null, false, false, null, true, null);
+            return new MainPageData(null, false, false, null, true, null);
         }
     }
 
