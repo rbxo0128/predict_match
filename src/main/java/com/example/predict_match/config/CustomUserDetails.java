@@ -10,15 +10,17 @@ public class CustomUserDetails implements UserDetails {
     private final String password;
     private final String displayName;
     private final Long userId;
+    private final Integer point;
     private final Collection<? extends GrantedAuthority> authorities;
     private final boolean enabled;
 
-    public CustomUserDetails(String email, String password, String displayName, Long userId,
+    public CustomUserDetails(String email, String password, String displayName, Long userId, Integer point,
                              Collection<? extends GrantedAuthority> authorities, boolean enabled) {
         this.email = email;
         this.password = password;
         this.displayName = displayName;
         this.userId = userId;
+        this.point = point;
         this.authorities = authorities;
         this.enabled = enabled;
     }
@@ -44,6 +46,10 @@ public class CustomUserDetails implements UserDetails {
 
     public Long getUserId() {
         return userId;
+    }
+
+    public Integer getPoint() {
+        return point;
     }
 
     @Override

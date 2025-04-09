@@ -337,8 +337,9 @@
                                 <sec:authentication property="principal.displayName" />
                             </span>
                         <span class="user-points">
-                                <i class="fas fa-coins mr-1"></i> 0 P
-                            </span>
+                            <i class="fas fa-coins mr-1"></i>
+                            <sec:authentication property="principal.point" /> P
+                        </span>
                     </div>
                     <a href="/logout" class="ml-4 text-sm text-gray-300 hover:text-white flex items-center">
                         <i class="fas fa-sign-out-alt mr-1"></i> 로그아웃

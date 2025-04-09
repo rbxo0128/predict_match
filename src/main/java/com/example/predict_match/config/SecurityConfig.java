@@ -74,6 +74,7 @@ public class SecurityConfig {
                         user.password(),
                         user.username(),  // 실제 사용자 이름
                         user.userId(),
+                        user.point(),
                         authorities,
                         user.isActive()
                 );
