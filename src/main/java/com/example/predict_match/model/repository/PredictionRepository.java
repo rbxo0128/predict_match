@@ -148,7 +148,7 @@ public class PredictionRepository implements JDBCRepository {
 
                         // 정확한 예측과 틀린 예측에 대한 포인트
                         final int CORRECT_PREDICTION_POINTS = 10;
-                        final int INCORRECT_PREDICTION_POINTS = -5;
+                        final int INCORRECT_PREDICTION_POINTS = 0;
 
                         // 각 경기 처리
                         while (matchRs.next()) {

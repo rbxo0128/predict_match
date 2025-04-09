@@ -602,7 +602,14 @@
                                 <div class="team-logo">
                                     <c:set var="team1Name" value="${match.team1().teamName()}" />
                                     <c:if test="${fn:length(team1Name) > 3}">
-                                        <c:out value="${fn:substring(team1Name, 0, 2)}" />
+                                        <c:choose>
+                                            <c:when test="${team1Name eq 'Dplus KIA'}">
+                                                <c:out value="DK" />
+                                            </c:when>
+                                            <c:otherwise>
+                                                <c:out value="${fn:substring(team1Name, 0, 2)}" />
+                                            </c:otherwise>
+                                        </c:choose>
                                     </c:if>
                                     <c:if test="${fn:length(team1Name) <= 3}">
                                         <c:out value="${team1Name}" />

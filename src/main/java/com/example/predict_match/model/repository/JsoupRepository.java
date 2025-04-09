@@ -27,6 +27,7 @@ public class JsoupRepository {
             Document doc = Jsoup.connect(url).get();
             // 경기 목록 크롤링 (예제: class="schedule_list" 아래 정보 가져오기)
             Elements scripts = doc.select("script");
+
             for (Element script : scripts) {
                 String scriptData = script.data();
 
@@ -38,6 +39,7 @@ public class JsoupRepository {
 
                     for (MatchSchedule matchSchedule : matches) {
                         for (MatchSchedule.Schedule schedule : matchSchedule.schedules()) {
+                            System.out.println("schedule = " + schedule);
                             int team1Id = TeamId.fromAcronym(schedule.homeTeam().nameAcronym());
                             int team2Id = TeamId.fromAcronym(schedule.awayTeam().nameAcronym());
                             String time = schedule.time();
@@ -52,7 +54,7 @@ public class JsoupRepository {
                             // winner_id는 winner 값이나 스코어를 통해 결정 (예시)
                             int winnerId = 0;
                             if (isFinished == 1) {
-                                if (schedule.winner().equals("Home")){
+                                if (schedule.winner().equals("HOME")){
                                     winnerId = team1Id;
                                 }
                                 else{
