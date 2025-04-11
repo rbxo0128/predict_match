@@ -166,4 +166,20 @@ public class UserRepository implements JDBCRepository {
 
         return null;
     }
+
+    public void updatePassword(String email, String newPassword) throws SQLException, ClassNotFoundException {
+        String query = "UPDATE USERS SET password = ? WHERE email = ?";
+
+        try (Connection conn = getConnection(URL, USER, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, newPassword);
+            pstmt.setString(2, email);
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("비밀번호 업데이트 실패: 해당 이메일의 사용자를 찾을 수 없습니다.");
+            }
+        }
+    }
 }

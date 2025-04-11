@@ -59,4 +59,10 @@ public class UserService {
     public UserRankDTO getUserRank(Long userId) throws Exception {
         return userRepository.findUserRankById(userId);
     }
+
+    public void updatePassword(String email, String newPassword) throws Exception {
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        userRepository.updatePassword(email, encodedPassword);
+    }
 }
