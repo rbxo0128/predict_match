@@ -8,6 +8,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <title>LCK 경기 일정 및 예측</title>
     <link href="${pageContext.request.contextPath}/asset/css/output.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
@@ -670,7 +672,7 @@
                     })
                     .catch(error => {
                         console.error('예측 처리 중 오류:', error);
-                        showMessage(false, '예측 처리 중 오류가 발생했습니다.');
+                        showMessage(false, '예측 처리 중 일시적인 오류가 발생했습니다. <br>잠시 후 다시 시도하시거나, 페이지를 새로고침해 주세요.');
 
                         // 버튼 원래 상태로 복원
                         button.innerHTML = originalButtonHTML;

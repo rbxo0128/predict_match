@@ -90,8 +90,9 @@ public class MatchPredictionService {
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
+            System.out.println("에러에러에러에러");
             response.put("success", false);
-            response.put("error", "예측 처리 중 오류가 발생했습니다: " + e.getMessage());
+            response.put("error", "예측 처리 중 일시적인 오류가 발생했습니다. \n잠시 후 다시 시도하시거나, 문제가 지속될 경우 페이지를 새로고침해 주세요.");
             return ResponseEntity.ok(response);
         }
     }
