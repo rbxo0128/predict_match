@@ -18,6 +18,8 @@
     <!-- Add AOS for scroll animations -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -455,6 +457,20 @@
         .progress-0-40 {
             color: #ff5c5c;
         }
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
 
     </style>
 </head>
@@ -550,6 +566,45 @@
     </div>
 </div>
 
+<!-- 채팅 컨테이너 -->
+<div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+    <div style="background-color: #1a1f2e; color: white; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+        <!-- 헤더 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2 style="font-size: 1.25rem; font-weight: bold;">LCK 실시간 댓글</h2>
+            <!-- 개선된 LIVE 표시 -->
+            <span style="background: linear-gradient(to right, #3b82f6, #2563eb); color: white; font-size: 0.75rem; padding: 4px 10px; border-radius: 9999px; font-weight: bold; box-shadow: 0 0 8px rgba(59, 130, 246, 0.6); display: flex; align-items: center;">
+                <span style="display: inline-block; width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; margin-right: 6px; animation: pulse 1.5s infinite;"></span>
+                LIVE
+            </span>
+        </div>
+
+        <!-- 채팅 메시지 영역 -->
+        <div id="chat-messages" style="height: 320px; overflow-y: auto; margin-bottom: 15px; padding: 16px; background-color: #111827; border-radius: 6px; border: 1px solid #374151;">
+            <div style="color: #9ca3af; font-size: 0.875rem; text-align: center;">오늘의 LCK 경기에 대해 실시간으로 이야기해보세요!</div>
+        </div>
+
+        <!-- 메시지 입력 폼 -->
+        <form id="chat-form" style="display: flex;">
+            <input type="text" id="message" placeholder="메시지를 입력하세요..."
+                   style="flex-grow: 1; padding: 12px 16px; background-color: #111827; color: white; border: none; border-radius: 6px 0 0 6px; outline: none;">
+            <!-- 개선된 버튼 스타일 -->
+            <button type="submit"
+                    style="background: linear-gradient(to right, #2563eb, #1d4ed8); color: white; padding: 12px 24px; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-weight: 500; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(37, 99, 235, 0.3);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+                작성
+            </button>
+        </form>
+
+        <!-- 로그인 유도 메시지 -->
+        <div style="margin-top: 8px; font-size: 0.875rem; color: #9ca3af; text-align: center;">
+            로그인한 사용자만 채팅에 참여할 수 있습니다
+        </div>
+    </div>
+</div>
 <!-- 다가오는 경기 섹션 -->
 <div class="lck-container py-12">
     <div class="text-center mb-10" data-aos="fade-up">
@@ -895,7 +950,71 @@
             once: true,
             disable: 'mobile'
         });
+        connect();
     });
+
+    let stompClient = null;
+    const userId = '${sessionScope.user.id}'; // 세션에서 사용자 ID 가져오기
+
+    function connect() {
+        const socket = new SockJS('/ws-chat');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function(frame) {
+            console.log('Connected: ' + frame);
+
+            // 공개 채팅방 구독
+            stompClient.subscribe('/topic/public', function(message) {
+                showMessage(JSON.parse(message.body));
+            });
+
+            // 페이지 로드 시 최근 메시지 가져오기
+            fetch('/api/chat/recent')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(showMessage);
+                });
+        });
+    }
+
+    function sendMessage() {
+        const messageInput = document.getElementById('message');
+        const messageContent = messageInput.value.trim();
+
+        if(messageContent && stompClient) {
+            const chatMessage = {
+                userId: userId,
+                message: messageContent
+            };
+
+            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+            messageInput.value = '';
+        }
+    }
+
+    function showMessage(message) {
+        const chatMessages = document.getElementById('chat-messages');
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('mb-2');
+
+        const timestamp = new Date(message.timestamp).toLocaleTimeString();
+
+        messageElement.innerHTML = `
+            <span class="font-bold">${message.username}</span>
+            <span class="text-gray-500 text-xs">${timestamp}</span><br>
+            <span>${message.message}</span>
+        `;
+
+        chatMessages.appendChild(messageElement);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    document.getElementById('chat-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        sendMessage();
+    });
+
+
 </script>
 </body>
 </html>
