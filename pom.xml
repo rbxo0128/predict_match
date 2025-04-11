@@ -89,6 +89,11 @@
             <artifactId>spring-messaging</artifactId>
             <version>6.2.5</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.18.3</version>  <!-- Jackson 2.18.3 버전에 맞추어 설정 -->
+        </dependency>
     </dependencies>
 
     <build>
