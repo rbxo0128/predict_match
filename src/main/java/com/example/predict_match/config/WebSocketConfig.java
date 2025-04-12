@@ -25,7 +25,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-chat")
-                .setAllowedOrigins("*") // 임시로 나중에 render사이트로 수정
+                .setAllowedOrigins("http://localhost:8080", "http://localhost:3000","https://lck-match.onrender.com/")
                 .withSockJS();
     }
 

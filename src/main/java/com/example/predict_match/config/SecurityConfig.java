@@ -33,8 +33,6 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .headers(headers -> headers
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login-process") // 다른 URL 사용
