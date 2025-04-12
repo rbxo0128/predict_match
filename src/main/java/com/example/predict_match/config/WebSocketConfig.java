@@ -10,6 +10,7 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -40,5 +41,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
         converter.setObjectMapper(objectMapper());
         return converter;
+    }
+
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+        registration.setSendTimeLimit(30 * 1000)  // 30초
+                .setSendBufferSizeLimit(512 * 1024)  // 512KB
+                .setMessageSizeLimit(128 * 1024);  // 128KB
     }
 }
