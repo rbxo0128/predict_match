@@ -584,25 +584,47 @@
             <div style="color: #9ca3af; font-size: 0.875rem; text-align: center;">오늘의 LCK 경기에 대해 실시간으로 이야기해보세요!</div>
         </div>
 
-        <!-- 메시지 입력 폼 -->
-        <form id="chat-form" style="display: flex;">
-            <input type="text" id="message" placeholder="메시지를 입력하세요..."
-                   style="flex-grow: 1; padding: 12px 16px; background-color: #111827; color: white; border: none; border-radius: 6px 0 0 6px; outline: none;">
-            <!-- 개선된 버튼 스타일 -->
-            <button type="submit"
-                    style="background: linear-gradient(to right, #2563eb, #1d4ed8); color: white; padding: 12px 24px; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-weight: 500; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(37, 99, 235, 0.3);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
-                작성
-            </button>
-        </form>
+        <sec:authorize access="isAuthenticated()">
+            <!-- 로그인한 사용자용 메시지 입력 폼 -->
+            <form id="chat-form" style="display: flex;">
+                <input type="text" id="message" placeholder="메시지를 입력하세요..."
+                       style="flex-grow: 1; padding: 12px 16px; background-color: #111827; color: white; border: none; border-radius: 6px 0 0 6px; outline: none;">
+                <!-- 개선된 버튼 스타일 -->
+                <button type="submit"
+                        style="background: linear-gradient(to right, #2563eb, #1d4ed8); color: white; padding: 12px 24px; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-weight: 500; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(37, 99, 235, 0.3);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                    작성
+                </button>
+            </form>
+        </sec:authorize>
 
-        <!-- 로그인 유도 메시지 -->
-        <div style="margin-top: 8px; font-size: 0.875rem; color: #9ca3af; text-align: center;">
-            로그인한 사용자만 채팅에 참여할 수 있습니다
-        </div>
+        <sec:authorize access="isAnonymous()">
+            <!-- 로그인하지 않은 사용자용 비활성화된 입력 폼 -->
+            <div style="display: flex;">
+                <input type="text" disabled placeholder="로그인 후 이용 가능합니다"
+                       style="flex-grow: 1; padding: 12px 16px; background-color: #1a1f2e; color: #6b7280; border: 1px solid #374151; border-radius: 6px 0 0 6px; outline: none; cursor: not-allowed;">
+                <button disabled
+                        style="background: #374151; color: #6b7280; padding: 12px 24px; border: none; border-radius: 0 6px 6px 0; cursor: not-allowed; font-weight: 500; display: flex; align-items: center; justify-content: center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                    작성
+                </button>
+            </div>
+
+            <!-- 로그인 유도 메시지 -->
+            <div style="margin-top: 12px; font-size: 0.875rem; color: #9ca3af; text-align: center; display: flex; justify-content: center; align-items: center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; color: #3b82f6;">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                <span>채팅 참여를 위해 <a href="/login" style="color: #3b82f6; font-weight: 500; text-decoration: underline;">로그인</a>이 필요합니다</span>
+            </div>
+        </sec:authorize>
     </div>
 </div>
 <!-- 다가오는 경기 섹션 -->
@@ -944,13 +966,21 @@
 
 <!-- 자바스크립트 -->
 <script>
-    // AOS 애니메이션 초기화
     document.addEventListener('DOMContentLoaded', function() {
         AOS.init({
             once: true,
             disable: 'mobile'
         });
         connect();
+
+        // 폼 이벤트 리스너 등록 (로그인한 사용자만)
+        const chatForm = document.getElementById('chat-form');
+        if (chatForm) {
+            chatForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                sendMessage();
+            });
+        }
     });
 
     let stompClient = null;
@@ -979,6 +1009,8 @@
 
     function sendMessage() {
         const messageInput = document.getElementById('message');
+        if (!messageInput) return; // 로그인하지 않은 경우 메시지 입력창이 없음
+
         const messageContent = messageInput.value.trim();
 
         if(messageContent && stompClient) {
@@ -997,22 +1029,21 @@
         const messageElement = document.createElement('div');
         messageElement.classList.add('mb-2');
 
-        const timestamp = new Date(message.timestamp).toLocaleTimeString();
+        const [year, month, day, hour, minute] = message.timestamp;
+        const formattedMonth = String(month).padStart(2, '0');
+        const formattedDay = String(day).padStart(2, '0');
+        const formattedHour = String(hour).padStart(2, '0');
+        const formattedMinute = String(minute).padStart(2, '0');
 
-        messageElement.innerHTML = `
-            <span class="font-bold">${message.username}</span>
-            <span class="text-gray-500 text-xs">${timestamp}</span><br>
-            <span>${message.message}</span>
-        `;
+        const timestamp = year + '-' + formattedMonth + '-' + formattedDay + ' ' + formattedHour +':' + formattedMinute;
+        messageElement.innerHTML =
+            '<span class="font-bold">' + message.username + '</span> ' +
+            '<span class="text-gray-500 text-xs">' + timestamp + '</span><br>' +
+            '<span>' + message.message + '</span>';
 
         chatMessages.appendChild(messageElement);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
-
-    document.getElementById('chat-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        sendMessage();
-    });
 
 
 </script>

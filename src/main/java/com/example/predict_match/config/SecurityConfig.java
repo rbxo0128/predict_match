@@ -28,7 +28,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/", "/login", "/login-process", "/signup", "rankings","/api/chat/recent", "/matches","forgot-password","reset-password","/api/update-matches", "/images/**", "/asset/**").permitAll()
+                        .requestMatchers("/", "/login", "/login-process", "/signup", "rankings", "/ws-chat/**","/api/chat/recent", "/matches","forgot-password","reset-password","/api/update-matches", "/images/**", "/asset/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

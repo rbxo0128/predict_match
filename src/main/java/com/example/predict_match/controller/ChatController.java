@@ -26,16 +26,26 @@ public class ChatController {
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         Long userId = userDetails.getUserId();
 
-        // 새 인스턴스 생성 시 userId도 포함
-        ChatMessage updatedMessage = new ChatMessage(
+        ChatMessage messageToSave = new ChatMessage(
                 chatMessage.id(),
-                userId,  // 여기에 실제 userId 설정
+                userId,
                 userDetails.getDisplayName(),
                 chatMessage.message(),
                 LocalDateTime.now()
         );
 
-        chatService.saveMessage(updatedMessage);
-        return updatedMessage;
+        // DB에 저장
+        chatService.saveMessage(messageToSave);
+
+        // 클라이언트에게 보낼 응답용 객체 생성 (userId 제외)
+        ChatMessage responseMessage = new ChatMessage(
+                null,
+                null,
+                userDetails.getDisplayName(),
+                chatMessage.message(),
+                LocalDateTime.now()
+        );
+
+        return responseMessage;
     }
 }

@@ -41,7 +41,7 @@ public class ChatRepository implements JDBCRepository {
         List<ChatMessage> messages = new ArrayList<>();
         String sql = "SELECT cm.id, cm.user_id, u.username, cm.message, cm.timestamp " +
                 "FROM CHAT_MESSAGES cm JOIN USERS u ON cm.user_id = u.user_id " +
-                "ORDER BY cm.timestamp DESC LIMIT ?";
+                "ORDER BY cm.timestamp ASC LIMIT ?";
 
         try (Connection conn = getConnection(URL, USER, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -51,8 +51,8 @@ public class ChatRepository implements JDBCRepository {
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     messages.add(new ChatMessage(
-                            rs.getLong("id"),
-                            rs.getLong("user_id"),
+                            null,
+                            null,
                             rs.getString("username"),
                             rs.getString("message"),
                             rs.getTimestamp("timestamp").toLocalDateTime()
@@ -63,7 +63,6 @@ public class ChatRepository implements JDBCRepository {
             logger.severe("최근 채팅 메시지 조회 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
         }
-        System.out.println("messages = " + messages);
         return messages;
     }
 }
