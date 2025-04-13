@@ -32,7 +32,7 @@ public class ScheduleService {
             List<Match> matches = jsoupRepository.getMatches(4);
             matchRepository.update(matches);
             List<Team> teams = jsoupTeamRepository.getTeams();
-            System.out.println("teams = " + teams);
+            logger.info(teams.toString());
             teamRepository.update(teams);
         }
     }

@@ -1,6 +1,7 @@
 package com.example.predict_match.config;
 
 import com.example.predict_match.model.dto.User;
+import com.example.predict_match.model.repository.UserRepository;
 import com.example.predict_match.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -25,7 +27,7 @@ import java.util.Optional;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, UserRepository userRepository) throws Exception {
         http
                 .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .authorizeHttpRequests(authz -> authz
@@ -39,6 +41,22 @@ public class SecurityConfig {
                         .usernameParameter("username")
                         .passwordParameter("password")
                         .defaultSuccessUrl("/", true)
+                        .successHandler((request, response, authentication) -> {
+                            // 사용자 ID 가져오기
+                            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+                            Long userId = userDetails.getUserId();
+
+                            try {
+                                // 마지막 로그인 시간 업데이트
+                                userRepository.updateLastLogin(userId);
+                            } catch (Exception e) {
+                                // 예외 처리
+                                e.printStackTrace();
+                            }
+
+                            // 기본 URL로 리다이렉트
+                            response.sendRedirect("/");
+                        })
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )

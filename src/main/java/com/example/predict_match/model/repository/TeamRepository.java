@@ -87,7 +87,7 @@ public class TeamRepository implements JDBCRepository {
                 pstmt.executeUpdate();
             }
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            logger.severe(e.getMessage());
         }
     }
 

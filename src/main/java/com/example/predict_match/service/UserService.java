@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,8 +25,12 @@ public class UserService {
 
     public User registerNewUser(SignUpRequest signUpRequest) throws Exception {
         // 이메일 중복 체크
-        if (userRepository.findByEmail(signUpRequest.email()).isPresent()) {
+        if (findByEmail(signUpRequest.email()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+        }
+
+        if (findByUsername(signUpRequest.username()).isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 사용자명입니다.");
         }
 
         // 비밀번호 암호화
@@ -46,6 +51,10 @@ public class UserService {
         );
 
         return userRepository.save(newUser);
+    }
+
+    public Optional<User> findByUsername(String username) throws Exception {
+        return userRepository.findByUsername(username);
     }
 
     public Optional<User> findByEmail(String email) throws Exception {

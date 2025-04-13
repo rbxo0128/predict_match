@@ -86,6 +86,35 @@ public class UserRepository implements JDBCRepository {
         }
     }
 
+    public Optional<User> findByUsername(String username) throws SQLException, ClassNotFoundException {
+        String query = "SELECT * FROM USERS WHERE username = ?";
+
+        try (Connection conn = getConnection(URL, USER, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return Optional.of(new User(
+                        rs.getLong("user_id"),
+                        rs.getString("username"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        rs.getString("role"),
+                        rs.getInt("point"),
+                        rs.getBoolean("is_active"),
+                        rs.getTimestamp("last_login") != null ?
+                                rs.getTimestamp("last_login").toLocalDateTime() : null,
+                        rs.getTimestamp("created_at").toLocalDateTime(),
+                        rs.getTimestamp("updated_at").toLocalDateTime()
+                ));
+            }
+
+            return Optional.empty();
+        }
+    }
+
     private long generateUniqueUserId() throws SQLException, ClassNotFoundException {
         try (Connection conn = getConnection(URL, USER, PASSWORD);
              Statement stmt = conn.createStatement()) {

@@ -39,7 +39,6 @@ public class RankingController {
                 CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
                 String currentUsername = userDetails.getDisplayName();
 
-                System.out.println("currentUsername = " + currentUsername);
 
                 // 현재 사용자가 Top 10에 있는지 확인
                 Optional<UserRankDTO> currentUserInTop = topUsers.stream()
@@ -56,7 +55,6 @@ public class RankingController {
                     UserRankDTO currentUserRank = userService.getUserRank(userId);
                     model.addAttribute("isCurrentUserInTop", false);
                     model.addAttribute("currentUserRank", currentUserRank);
-                    System.out.println("currentUserRank = " + currentUserRank);
                 }
             }
 

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.logging.Logger;
+
 @Controller
 public class MainPageController {
 
@@ -38,9 +40,6 @@ public class MainPageController {
 
             return "index";
         } catch (Exception e) {
-            // 오류 발생 시 간단한 로깅만 수행하고 기본 뷰 반환
-            System.err.println("메인 페이지 로딩 중 오류 발생: " + e.getMessage());
-            System.out.println("e = " + e.getMessage());
             model.addAttribute("hasMatches", false);
             model.addAttribute("loadError", true);
             return "index";

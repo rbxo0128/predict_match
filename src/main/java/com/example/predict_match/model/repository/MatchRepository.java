@@ -65,7 +65,6 @@ public class MatchRepository implements JDBCRepository {
                 pstmt.setInt(7, match.winner_id());
 
                 int rowsAffected = pstmt.executeUpdate();
-                System.out.println("Rows affected: " + rowsAffected);
             }
         }catch (Exception e){
             System.out.println(e.getMessage());

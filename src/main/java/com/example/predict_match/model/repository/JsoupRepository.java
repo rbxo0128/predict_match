@@ -39,7 +39,6 @@ public class JsoupRepository {
 
                     for (MatchSchedule matchSchedule : matches) {
                         for (MatchSchedule.Schedule schedule : matchSchedule.schedules()) {
-                            System.out.println("schedule = " + schedule);
                             int team1Id = TeamId.fromAcronym(schedule.homeTeam().nameAcronym());
                             int team2Id = TeamId.fromAcronym(schedule.awayTeam().nameAcronym());
                             String time = schedule.time();
